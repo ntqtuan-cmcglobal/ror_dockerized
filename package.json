@@ -1,5 +1,8 @@
 {
   "name": "testapp",
   "private": true,
-  "dependencies": {}
+  "devDependencies": {
+    "@prettier/plugin-ruby": "^4.0.2",
+    "prettier": "^3.6.2"
+  }
 }

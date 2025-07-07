@@ -3,6 +3,21 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.4.4'
 
+# dependencies
+gem 'bigdecimal'
+
+gem 'io-console'
+
+gem 'mutex_m'
+
+gem 'prettier_print', '~> 1.2'
+
+gem 'syntax_tree', '~> 6.2'
+
+gem 'syntax_tree-haml', '~> 4.0'
+
+gem 'syntax_tree-rbs', '~> 1.0'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 8.0.2'
 # Use sqlite3 as the database for Active Record
@@ -27,7 +42,9 @@ gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
-gem 'mutex_m'
+gem 'rubocop', '~> 1.77', require: false
+
+gem 'devise'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
