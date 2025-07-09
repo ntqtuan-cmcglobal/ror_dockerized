@@ -44,7 +44,11 @@ gem 'bcrypt', '~> 3.1.7'
 
 gem 'rubocop', '~> 1.77', require: false
 
-gem 'devise'
+gem 'devise', '~> 4.9'
+
+gem 'bootstrap-sass', '~> 3.4.1'
+
+gem 'jquery-rails', '~> 4.6.0'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'

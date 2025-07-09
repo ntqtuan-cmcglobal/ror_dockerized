@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Docker Compose App</title>
+    <title>Digital Assets Management</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -10,8 +10,13 @@
   </head>
 
   <body>
-    <%= yield %>
     <div class="container-fluid">
+      <%= render "shared/navigation" %>
+
+      <div class="content">
+        <%= yield %>
+      </div>
+      
       <p class="notice"><%= notice %></p>
       <p class="alert"><%= alert %></p>
     </div>
