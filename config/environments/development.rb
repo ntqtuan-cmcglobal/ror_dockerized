@@ -10,9 +10,24 @@ Rails.application.configure do
   config.eager_load = false
 
   # Show full error reports.
-    config.consider_all_requests_local = true
+  config.consider_all_requests_local = true
 
-  config.action_mailer.default_url_options = {host: "localhost", port: 3000}
+  # Mail configuration
+  config.action_mailer.delivery_method = :sendmail
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_options = { from: 'ror-dam@spacemail.com' }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'sandbox.smtp.mailtrap.io',
+    port: 587,
+    domain: 'example.com',
+    user_name: 'a7a512d34d3d39',
+    password: '502d45b76a1cd5',
+    authentication: 'plain',
+    enable_starttls_auto: true
+  }
+  config.action_mailer.default_url_options = { host: 'localhost:3000' }
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
