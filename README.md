@@ -1,19 +1,74 @@
-# README
+# 🚀 Rails + Postgres with Docker Compose
 
-This is an example repository for working with rails and postgres, and setting them up using docker-compose.
+This repository provides a simple setup for running a **Rails** application with **PostgreSQL**, using **Docker Compose**.
 
-To run this app, do the following.
+---
 
-1. Install docker
-1. Run `docker-compose up`
-1. This would run the web service in a container and postgres in a container.
-1. Would look something like this.
-   ![alt text](blog_images/docker_compose.png)
+## 🛠️ Getting Started
 
-1. This would take a while the first time.
-1. Now we need to create db before we can go any further. For this we'll connect to the docker container. 6. In another terminal run `docker ps` 7. ![alt text](blog_images/docker_ps.png) 8. Copy the container id for web, and connect to container by running this command. `docker exec -it 1597728759c0 sh` 9. You'll be connected to the docker container. 10. Run `rake db:create && rake db:migrate`
-1. Go to [http://localhost:3000/](http://localhost:3000/) and see if everything is working.
-1. Run all your rails commands in the container itself.
-1. Try running `rails g scaffold blog title:string body:string`
-1. Go to [http://localhost:3000/blogs](http://localhost:3000/blogs) and see if everything works.
-1.
+Follow these steps to get the app up and running:
+
+### 1. Install Docker
+
+Make sure Docker is installed on your system. You can download it from Docker's official site: https://www.docker.com/get-started
+
+### 2. Start the Application
+
+Run the following command in your terminal:
+
+    docker-compose up
+
+This will start:
+
+- A **Rails web service** container
+- A **PostgreSQL database** container
+
+⏳ The first run may take a few minutes to build the containers.
+
+![Docker Compose Running](blog_images/docker_compose.png)
+
+---
+
+## 🧱 Set Up the Database
+
+Before using the app, you need to create and migrate the database.
+
+### 1. Open a New Terminal
+
+Run:
+
+    docker ps
+
+This will list all running containers.
+
+![Docker PS](blog_images/docker_ps.png)
+
+### 2. Connect to the Web Container
+
+Copy the **Container ID** for the web service and run:
+
+    docker exec -it <container_id> sh
+
+Replace `<container_id>` with your actual container ID.
+
+### 3. Create and Migrate the Database
+
+Inside the container, run:
+
+    rake db:create && rake db:migrate
+
+---
+
+## 🌐 Access the App
+
+Visit http://localhost:3000/ in your browser to see the app running.
+
+---
+
+## ✨ Try Rails Commands
+
+You can run Rails commands inside the container. For example:
+
+    rails g scaffold blog title:string body:string
+
+Then visit http://localhost:3000/blogs to see your scaffolded blog in action.
