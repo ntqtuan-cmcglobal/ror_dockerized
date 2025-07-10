@@ -1,3 +1,4 @@
+<!-- filepath: /home/ntqtuan/Projects/ror_dockerized/app/views/layouts/application.html.erb -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,13 +9,15 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
   <body>
-    <div class="container-fluid">
+    <div class="container-fluid p-4">
       <%= render "shared/navigation" %>
-      <div class="content">
+      <div class="content mt-4">
         <%= yield %>
       </div>
-      <p class="notice"><%= notice %></p>
-      <p class="alert"><%= alert %></p>
+      <% if notice %>
+        <div class="alert alert-success mt-3"><%= notice %></div>
+      <% end %>
+      <% if alert %>
+        <div class="alert alert-danger mt-3"><%= alert %></div>
+      <% end %>
     </div>
-  </body>
-</html>

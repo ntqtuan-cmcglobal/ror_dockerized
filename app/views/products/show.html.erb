@@ -1,0 +1,26 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="mb-0">Product Details</h1>
+    </div>
+    <div class="card-body">
+      <p>
+        <strong>Name:</strong>
+        <%= @product.name %>
+      </p>
+      <p>
+        <strong>Description:</strong>
+        <%= @product.description %>
+      </p>
+      <p>
+        <strong>Seller:</strong>
+        <%= @product.user.full_name %>
+      </p>
+      <p>
+        <strong>Price:</strong>
+        <%= number_to_currency(@product.price) %>
+      </p>
+      <%= link_to 'Back', products_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+</div>

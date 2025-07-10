@@ -216,6 +216,8 @@ GEM
       stringio
     public_suffix (6.0.2)
     puma (3.12.6)
+    pundit (2.5.0)
+      activesupport (>= 3.0.0)
     racc (1.8.1)
     rack (2.2.17)
     rack-session (1.0.2)
@@ -392,6 +394,7 @@ DEPENDENCIES
   pg
   prettier_print (~> 1.2)
   puma (~> 3.11)
+  pundit (~> 2.5.0)
   rails (~> 8.0.2)
   redis (~> 4.0)
   rubocop (~> 1.77)

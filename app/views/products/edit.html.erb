@@ -1,0 +1,35 @@
+<%= form_with(model: @product, local: true, html: { class: "container mt-5" }) do |form| %>
+  <div class="card">
+    <div class="card-header">
+      <h2>Edit Product</h2>
+    </div>
+    <div class="card-body">
+      <% if @product.errors.any? %>
+        <div class="alert alert-danger">
+          <h4>There were some errors:</h4>
+          <ul>
+            <% @product.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <div class="mb-3">
+        <%= form.label :name, class: "form-label" %>
+        <%= form.text_field :name, class: "form-control" %>
+      </div>
+      <div class="mb-3">
+        <%= form.label :description, class: "form-label" %>
+        <%= form.text_area :description, class: "form-control", rows: 3 %>
+      </div>
+      <div class="mb-3">
+        <%= form.label :price, class: "form-label" %>
+        <%= form.number_field :price, step: 0.01, class: "form-control" %>
+      </div>
+    </div>
+    <div class="card-footer text-end">
+      <%= form.submit "Update Product", class: "btn btn-primary" %>
+      <%= link_to "Back", products_path, class: "btn btn-secondary ms-2" %>
+    </div>
+  </div>
+<% end %>
