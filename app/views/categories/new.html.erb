@@ -1,0 +1,28 @@
+<%# app/views/categories/new.html.erb %>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="mb-4">New Category</h2>
+      <%= form_with(model: @category, local: true) do |form| %>
+        <% if @category.errors.any? %>
+          <div class="alert alert-danger">
+            <h4 class="alert-heading">Please fix the following errors:</h4>
+            <ul>
+              <% @category.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <div class="mb-3">
+          <%= form.label :name, class: "form-label" %>
+          <%= form.text_field :name, class: "form-control", autofocus: true %>
+        </div>
+        <div class="d-flex justify-content-between">
+          <%= form.submit "Create Category", class: "btn btn-primary" %>
+          <%= link_to "Back", categories_path, class: "btn btn-secondary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

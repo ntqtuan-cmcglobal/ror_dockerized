@@ -6,7 +6,12 @@
     <div id="navbar">
       <ul class="nav navbar-nav">
         <li><%= link_to 'Home', root_path %></li>
-        <li><%= link_to 'Products', products_path %></li>
+        <% if policy(Product).index? %>
+          <li><%= link_to 'Products', products_path %></li>
+        <% end %>
+        <% if policy(Category).index? %>
+          <li><%= link_to 'Categories', categories_path %></li>
+        <% end %>
       </ul>
       <ul class="nav navbar-nav pull-right">
         <% if user_signed_in? %>

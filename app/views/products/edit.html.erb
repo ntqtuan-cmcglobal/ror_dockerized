@@ -26,10 +26,13 @@
         <%= form.label :price, class: "form-label" %>
         <%= form.number_field :price, step: 0.01, class: "form-control" %>
       </div>
+      <div class="mb-3">
+        <%= form.label :category, class: "form-label" %>
+        <%= form.select :category_id, options_for_select(@categories.map { |c| [c.name, c.id] }, @product.category&.id), { include_blank: true }, class: "form-select" %>
+      </div>
+      <div class="card-footer text-end">
+        <%= form.submit "Update Product", class: "btn btn-primary" %>
+        <%= link_to "Back", products_path, class: "btn btn-secondary ms-2" %>
+      </div>
     </div>
-    <div class="card-footer text-end">
-      <%= form.submit "Update Product", class: "btn btn-primary" %>
-      <%= link_to "Back", products_path, class: "btn btn-secondary ms-2" %>
-    </div>
-  </div>
-<% end %>
+  <% end %>

@@ -7,9 +7,9 @@ class Product < ApplicationRecord
   # has_many :orders, dependent: :destroy
   belongs_to :user
 
-  # Scopes
-  scope :available, -> { where(available: true) }
+  belongs_to :category, optional: true
 
+  # Scopes
   def owned_by?(user)
     self.user == user
   end

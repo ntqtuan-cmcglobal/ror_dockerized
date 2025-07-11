@@ -20,7 +20,10 @@
         <strong>Price:</strong>
         <%= number_to_currency(@product.price) %>
       </p>
-      <%= link_to 'Back', products_path, class: "btn btn-secondary" %>
+      <p>
+        <strong>Category:</strong>
+        <%= @product.category ? @product.category.name : "Uncategorized" %>
+        <%= link_to 'Back', products_path, class: "btn btn-secondary" %>
+      </div>
     </div>
   </div>
-</div>

@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Categories</h1>
+    <% if policy(Category).new? %>
+      <%= link_to 'New Category', new_category_path, class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+  <% if @categories.any? %>
+    <table class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>Name</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @categories.each do |category| %>
+          <tr>
+            <td><%= category.name %></td>
+            <td class="text-end">
+              <% if policy(category).show? %>
+                <%= link_to 'Show', category_path(category), class: 'btn btn-sm btn-info' %>
+              <% end %>
+              <% if policy(category).edit? %>
+                <%= link_to 'Edit', edit_category_path(category), class: 'btn btn-sm btn-warning' %>
+              <% end %>
+              <% if policy(category).destroy? %>
+                <%= link_to 'Delete', category_path(category), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">No categories found.</div>
+  <% end %>
+</div>
