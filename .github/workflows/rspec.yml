@@ -2,13 +2,10 @@ name: RSpec CI
 on:
   push:
     branches:
-      - 'main'
-      - '*-maintenance'
-      - '*-dev'
-      - 'pr-*'
+      - "digital-assets-management"
   pull_request:
     branches:
-      - '*'
+      - "*"
 permissions:
   contents: read
 concurrency:
@@ -18,54 +15,54 @@ concurrency:
 jobs:
   rubocop:
     name: Rubocop
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: "3.4"
       - run: script/update_rubygems_and_install_bundler
       - run: bundle install --standalone
       - run: bundle binstubs --all
       - run: script/run_rubocop
 
   test:
-    name: 'Ruby: ${{ matrix.ruby }}, Rails: ${{ matrix.env.RAILS_VERSION }}'
-    runs-on: 'ubuntu-latest'
+    name: "Ruby: ${{ matrix.ruby }}, Rails: ${{ matrix.env.RAILS_VERSION }}"
+    runs-on: "ubuntu-latest"
     strategy:
       fail-fast: false
       matrix:
-       include:
-         # Edge Rails (?) builds >= 3.1
-         - ruby: 3.4
-           env:
-             RAILS_VERSION: 'main'
-         - ruby: 3.3
-           env:
-             RAILS_VERSION: 'main'
-         - ruby: 3.2
-           env:
-             RAILS_VERSION: 'main'
+        include:
+          # Edge Rails (?) builds >= 3.1
+          - ruby: 3.4
+            env:
+              RAILS_VERSION: "~> 8.0.2"
+          - ruby: 3.3
+            env:
+              RAILS_VERSION: "~> 8.0.2"
+          - ruby: 3.2
+            env:
+              RAILS_VERSION: "~> 8.0.2"
 
-         # Rails 8.0 builds >= 3.2
-         
-         - ruby: 3.3
-           env:
-             RAILS_VERSION: '~> 8.0.0'
-         - ruby: 3.2
-           env:
-             RAILS_VERSION: '~> 8.0.0'
+          # Rails 8.0 builds >= 3.2
 
-         # Rails 7.2 builds >= 3.1
-         - ruby: 3.3
-           env:
-             RAILS_VERSION: '~> 7.2.0'
-         - ruby: 3.2
-           env:
-             RAILS_VERSION: '~> 7.2.0'
-         - ruby: 3.1
-           env:
-             RAILS_VERSION: '~> 7.2.0'
+          - ruby: 3.3
+            env:
+              RAILS_VERSION: "~> 8.0.0"
+          - ruby: 3.2
+            env:
+              RAILS_VERSION: "~> 8.0.0"
+
+          # Rails 7.2 builds >= 3.1
+          - ruby: 3.3
+            env:
+              RAILS_VERSION: "~> 7.2.0"
+          - ruby: 3.2
+            env:
+              RAILS_VERSION: "~> 7.2.0"
+          - ruby: 3.1
+            env:
+              RAILS_VERSION: "~> 7.2.0"
 
     env: ${{ matrix.env }}
     steps:
