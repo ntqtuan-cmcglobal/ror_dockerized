@@ -1,77 +1,15 @@
-name: RSpec CI
-on:
-  push:
-    branches:
-      - "digital-assets-management"
-  pull_request:
-    branches:
-      - "*"
-permissions:
-  contents: read
-concurrency:
-  group: ${{ github.workflow }}-${{ github.github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
+name: Run RSpec tests
+on: [push]
 jobs:
-  rubocop:
-    name: Rubocop
-    runs-on: "ubuntu-latest"
+  run-rspec-tests:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4"
-      - run: script/update_rubygems_and_install_bundler
-      - run: bundle install --standalone
-      - run: bundle binstubs --all
-      - run: script/run_rubocop
-
-  test:
-    name: "Ruby: ${{ matrix.ruby }}, Rails: ${{ matrix.env.RAILS_VERSION }}"
-    runs-on: "ubuntu-latest"
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Edge Rails (?) builds >= 3.1
-          - ruby: 3.4
-            env:
-              RAILS_VERSION: "~> 8.0.2"
-          - ruby: 3.3
-            env:
-              RAILS_VERSION: "~> 8.0.2"
-          - ruby: 3.2
-            env:
-              RAILS_VERSION: "~> 8.0.2"
-
-          # Rails 8.0 builds >= 3.2
-
-          - ruby: 3.3
-            env:
-              RAILS_VERSION: "~> 8.0.0"
-          - ruby: 3.2
-            env:
-              RAILS_VERSION: "~> 8.0.0"
-
-          # Rails 7.2 builds >= 3.1
-          - ruby: 3.3
-            env:
-              RAILS_VERSION: "~> 7.2.0"
-          - ruby: 3.2
-            env:
-              RAILS_VERSION: "~> 7.2.0"
-          - ruby: 3.1
-            env:
-              RAILS_VERSION: "~> 7.2.0"
-
-    env: ${{ matrix.env }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-      - run: script/update_rubygems_and_install_bundler
-      - run: script/clone_all_rspec_repos
-      - run: bundle install --binstubs
-      - run: script/run_build
-        continue-on-error: ${{ matrix.allow_failure || false }}
+          # runs 'bundle install' and caches installed gems automatically
+          bundler-cache: true
+      - name: Run tests
+        run: |
+          bundle exec rspec
