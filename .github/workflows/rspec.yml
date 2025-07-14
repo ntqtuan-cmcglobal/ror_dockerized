@@ -10,6 +10,11 @@ jobs:
         with:
           # runs 'bundle install' and caches installed gems automatically
           bundler-cache: true
+      - name: Set up database
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+          bundle exec rails db:migrate
       - name: Run tests
         run: |
           bundle exec rspec
