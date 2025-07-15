@@ -36,9 +36,9 @@ jobs:
       - name: Install dependencies
         run: |
           bundle install
-      - name: Install tailwindcss-rails
+      - name: Build tailwindcss
         run: |
-          rails tailwindcss:install
+          bundle exec rails tailwindcss:build
       - name: Run tests
         run: |
           bundle exec rspec
