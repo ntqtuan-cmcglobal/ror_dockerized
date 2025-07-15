@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Products', type: :request do
   include Devise::Test::IntegrationHelpers
-  let(:user) { User.create!(full_name: Faker::Name.name, email: Faker::Internet.email, password: Faker::Internet.password, role: 'admin') }
+  let(:user) { User.create!(full_name: Faker::Name.name, email: Faker::Internet.email, password: Faker::Internet.password, role: 'buyer') }
   let(:category) { Category.create!(name: 'Electronics') }
   let(:valid_attributes) do
     { name: 'Laptop', price: 1000, user_id: user.id, category_id: category.id }
@@ -21,6 +21,9 @@ RSpec.describe 'Products', type: :request do
     it 'returns a success response' do
       Product.create! valid_attributes
       get products_path
+      pp 'start'
+      pp response.body
+      pp 'end'
       expect(response).to be_successful
     end
   end
@@ -29,6 +32,9 @@ RSpec.describe 'Products', type: :request do
     it 'returns a success response' do
       product = Product.create! valid_attributes
       get product_path(product)
+      pp 'start'
+      pp response.body
+      pp 'end'
       expect(response).to be_successful
     end
   end
