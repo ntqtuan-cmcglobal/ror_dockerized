@@ -13,8 +13,8 @@ RSpec.feature 'User Authentication', type: :feature do
 
   scenario 'User signs in with valid credentials' do
     visit new_user_session_path
-    fill_in 'Email', with: user.email
-    fill_in 'Password', with: 'password'
+    find_field('Email').set(user.email)
+    find_field('Password').set('password')
     click_button 'Login'
 
     expect(page).to have_content('Signed in successfully')
@@ -22,8 +22,8 @@ RSpec.feature 'User Authentication', type: :feature do
 
   scenario 'User fails to sign in with invalid credentials' do
     visit new_user_session_path
-    fill_in 'Email', with: user.email
-    fill_in 'Password', with: 'wrongpassword'
+    find_field('Email').set(user.email)
+    find_field('Password').set('wrongpassword')
     click_button 'Login'
 
     expect(page).to have_content('Invalid Email or password')
@@ -31,8 +31,8 @@ RSpec.feature 'User Authentication', type: :feature do
 
   scenario 'User signs out successfully' do
     visit new_user_session_path
-    fill_in 'Email', with: user.email
-    fill_in 'Password', with: 'password'
+    find_field('Email').set(user.email)
+    find_field('Password').set('password')
     click_button 'Login'
     click_link 'Logout'
 
