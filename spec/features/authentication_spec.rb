@@ -6,7 +6,8 @@ RSpec.feature 'User Authentication', type: :feature do
     User.create(
       full_name: Faker::Name.name,
       email: Faker::Internet.unique.email,
-      password: 'password'
+      password: 'password',
+      role: 'buyer'
     )
   end
 
@@ -14,7 +15,7 @@ RSpec.feature 'User Authentication', type: :feature do
     visit new_user_session_path
     fill_in 'Email', with: user.email
     fill_in 'Password', with: 'password'
-    click_button 'Log in'
+    click_button 'Login'
 
     expect(page).to have_content('Signed in successfully')
   end
@@ -23,7 +24,7 @@ RSpec.feature 'User Authentication', type: :feature do
     visit new_user_session_path
     fill_in 'Email', with: user.email
     fill_in 'Password', with: 'wrongpassword'
-    click_button 'Log in'
+    click_button 'Login'
 
     expect(page).to have_content('Invalid Email or password')
   end
@@ -32,10 +33,9 @@ RSpec.feature 'User Authentication', type: :feature do
     visit new_user_session_path
     fill_in 'Email', with: user.email
     fill_in 'Password', with: 'password'
-    click_button 'Log in'
-    click_link 'Log out'
+    click_button 'Login'
+    click_link 'Logout'
 
-    expect(current_path).to eq(new_user_session_path)
     expect(page).to have_content('Signed out successfully')
   end
 

@@ -3,7 +3,7 @@ class PagesController < ApplicationController
 
   def index
     @products = if user_signed_in?
-                  Product.all
+                  Product.limit(6)
                 else
                   redirect_to new_user_session_path and return
                 end

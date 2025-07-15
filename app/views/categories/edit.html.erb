@@ -1,21 +1,23 @@
-<h1>Edit Category</h1>
-<%= form_with(model: @category, local: true) do |form| %>
-  <% if @category.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@category.errors.count, "error") %> prohibited this category from being saved:</h2>
-      <ul>
-        <% @category.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+<h1 class="text-2xl font-bold mb-6 text-blue-600">Edit Category</h1>
+<div class="w-full max-w-md mx-auto bg-white p-8 rounded shadow">
+  <%= form_with(model: @category, local: true) do |form| %>
+    <% if @category.errors.any? %>
+      <div id="error_explanation" class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <h2 class="font-semibold mb-2"><%= pluralize(@category.errors.count, "error") %> prohibited this category from being saved:</h2>
+        <ul class="list-disc list-inside">
+          <% @category.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="mb-4">
+      <%= form.label :name, class: "block text-gray-700 font-medium mb-2" %>
+      <%= form.text_field :name, class: "block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500", autofocus: true %>
+    </div>
+    <div class="flex justify-between">
+      <%= form.submit "Update Category", class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded" %>
+      <%= link_to 'Back', categories_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded" %>
     </div>
   <% end %>
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-  <div class="actions">
-    <%= form.submit "Update Category" %>
-    <%= link_to 'Back', categories_path %>
-  </div>
-<% end %>
+</div>

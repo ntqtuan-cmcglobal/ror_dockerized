@@ -3,18 +3,35 @@
     <a href="/" class="text-2xl md:text-3xl font-bold text-blue-600 hover:text-blue-800 transition-colors duration-200">
       Digital Assets Store
     </a>
-    <nav>
-      <ul class="flex space-x-4">
+    <nav class="flex flex-1 items-center justify-between ml-8">
+      <!-- Left menu -->
+      <ul class="flex space-x-4 items-center">
         <li>
           <a href="/" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded transition-colors duration-200">Home</a>
         </li>
         <li>
           <a href="/products" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded transition-colors duration-200">Products</a>
         </li>
-        <li>
-          <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded transition-colors duration-200">Cart</a>
-        </li>
         <% if user_signed_in? %>
+          <% if current_user.buyer? %>
+            <li>
+              <a href="/cart" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded transition-colors duration-200">Cart</a>
+            </li>
+          <% elsif current_user.admin? || current_user.seller? %>
+            <li>
+              <a href="/categories" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded transition-colors duration-200">Categories</a>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
+      <!-- Right user info -->
+      <ul class="flex space-x-4 items-center ml-8">
+        <% if user_signed_in? %>
+          <li>
+            <span class="text-gray-600 px-3 py-2">
+              Hello, <%= current_user.full_name %> (<%= current_user.role.capitalize %>)
+            </span>
+          </li>
           <li>
             <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "text-gray-700 hover:text-blue-600 px-3 py-2 rounded transition-colors duration-200" %>
           </li>
