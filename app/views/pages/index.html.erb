@@ -1,32 +1,23 @@
-<div class="container py-5">
-  <div class="text-center mb-5">
-    <h1 class="display-4 fw-bold">Digital Assets Management</h1>
-    <p class="lead">Securely store, organize, and manage your digital assets in one place.</p>
-  </div>
-  <div class="row justify-content-center mb-4">
-    <div class="col-md-4 mb-3">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">Upload & Organize</h5>
-          <p class="card-text">Easily upload images, videos, documents, and more. Organize your assets with categories and tags for quick access.</p>
+<main class="flex-1 container mx-auto px-4 py-16 flex flex-col items-center">
+  <section class="text-center mb-16">
+    <h2 class="text-5xl font-extrabold text-gray-900 mb-6">Discover, Buy, and Sell Digital Assets</h2>
+    <p class="text-xl text-gray-600 mb-8">Marketplace for high-quality digital products: graphics, templates, code, and more.</p>
+    <a href="#" class="bg-blue-600 text-white px-8 py-4 rounded-lg shadow-lg hover:bg-blue-700 transition text-lg font-semibold">Browse Products</a>
+  </section>
+  <section class="w-full">
+    <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Featured Products</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      <% @products.each do |product| %>
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition h-[480px]">
+          <img src="<%= product.url || 'no-products-found.png' %>" alt="Product" class="mb-4 rounded-lg w-60 h-60 object-contain border border-gray-200">
+          <h4 class="text-lg font-semibold mb-2 text-center"><%= product.name %></h4>
+          <p class="text-gray-600 mb-4 text-center line-clamp-3 h-18"><%= product.description %></p>
+          <span class="text-blue-600 font-bold text-xl mb-4">$<%= product.price %></span>
+          <div class="mt-auto w-full flex justify-center">
+            <a href="<%= product_path(product) %>" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full max-w-xs text-center font-medium">Buy Now</a>
+          </div>
         </div>
-      </div>
+      <% end %>
     </div>
-    <div class="col-md-4 mb-3">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">Access Anywhere</h5>
-          <p class="card-text">Access your digital assets securely from any device, anytime. Share files with your team or clients with a single click.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 mb-3">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">Advanced Security</h5>
-          <p class="card-text">Your files are protected with industry-leading security and privacy features. Manage permissions and track activity with ease.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+  </section>
+</main>

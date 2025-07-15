@@ -52,6 +52,11 @@ gem 'jquery-rails', '~> 4.6.0'
 
 gem 'pundit', '~> 2.5.0'
 
+# tailwindcss
+gem 'cssbundling-rails'
+gem 'jsbundling-rails'
+gem 'tailwindcss-rails'
+
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
@@ -70,6 +75,12 @@ group :development, :test do
   gem 'shoulda-matchers'
 
   gem 'factory_bot_rails'
+
+  # Capybara, the library that allows us to interact with the browser using Ruby
+  gem 'capybara'
+
+  # This gem helps Capybara interact with the web browser.
+  gem 'webdrivers', '= 5.3.0'
 end
 
 group :development do
@@ -82,8 +93,6 @@ group :development do
 end
 
 group :test do
-  # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '>= 2.15'
   # gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   # gem 'chromedriver-helper'

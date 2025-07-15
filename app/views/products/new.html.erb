@@ -1,33 +1,33 @@
-<h1>New Product</h1>
+<h1 class="text-3xl font-bold mb-6">New Product</h1>
 <%= form_with(model: @product, local: true) do |form| %>
   <% if @product.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@product.errors.count, "error") %> prohibited this product from being saved:</h2>
-      <ul>
+    <div id="error_explanation" class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+      <h2 class="font-semibold mb-2"><%= pluralize(@product.errors.count, "error") %> prohibited this product from being saved:</h2>
+      <ul class="list-disc list-inside">
         <% @product.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
-  <div class="form-group">
-    <%= form.label :name %>
-    <%= form.text_field :name, class: "form-control" %>
+  <div class="mb-4">
+    <%= form.label :name, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.text_field :name, class: "w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" %>
   </div>
-  <div class="form-group">
-    <%= form.label :description %>
-    <%= form.text_area :description, class: "form-control" %>
+  <div class="mb-4">
+    <%= form.label :description, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.text_area :description, class: "w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" %>
   </div>
-  <div class="form-group">
-    <%= form.label :price %>
-    <%= form.number_field :price, step: 0.01, class: "form-control" %>
+  <div class="mb-4">
+    <%= form.label :price, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.number_field :price, step: 0.01, class: "w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" %>
   </div>
-  <div class="form-group">
-    <%= form.label :category %>
-    <%= form.select :category, options_for_select(@categories.map { |c| [c.name, c.id] }, @product.category&.id), { include_blank: true }, class: "form-control" %>
+  <div class="mb-6">
+    <%= form.label :category, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.select :category, options_for_select(@categories.map { |c| [c.name, c.id] }, @product.category&.id), { include_blank: true }, class: "w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" %>
   </div>
-  <div class="actions">
-    <%= form.submit "Create Product", class: "btn btn-primary" %>
+  <div class="flex items-center space-x-4">
+    <%= form.submit "Create Product", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    <%= link_to 'Back', products_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded" %>
   </div>
 <% end %>
-<%= link_to 'Back', products_path, class: "btn btn-default" %>
