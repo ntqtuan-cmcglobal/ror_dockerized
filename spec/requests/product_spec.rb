@@ -22,7 +22,7 @@ RSpec.describe 'Products', type: :request do
       Product.create! valid_attributes
       get products_path
       pp 'start'
-      pp response.body
+      p response.body
       pp 'end'
       expect(response).to be_successful
     end
@@ -33,7 +33,7 @@ RSpec.describe 'Products', type: :request do
       product = Product.create! valid_attributes
       get product_path(product)
       pp 'start'
-      pp response.body
+      p response.body
       pp 'end'
       expect(response).to be_successful
     end
