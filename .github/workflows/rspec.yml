@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:13-alpine
+        image: postgres:13
         ports: ["5432:5432"]
         env:
           POSTGRES_USER: postgres
@@ -33,12 +33,6 @@ jobs:
           bundle exec rails db:create
           bundle exec rails db:schema:load
           bundle exec rails db:migrate
-      - name: Install dependencies
-        run: |
-          bundle install
-      - name: Build tailwindcss
-        run: |
-          bundle exec rails tailwindcss:build
       - name: Run tests
         run: |
           bundle exec rspec
