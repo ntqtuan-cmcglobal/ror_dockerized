@@ -21,6 +21,9 @@ RSpec.describe 'Products', type: :request do
     it 'returns a success response' do
       Product.create! valid_attributes
       get products_path
+      pp '<pre>'
+      pp response.body
+      pp '</pre>'
       expect(response).to be_successful
     end
   end
@@ -29,6 +32,9 @@ RSpec.describe 'Products', type: :request do
     it 'returns a success response' do
       product = Product.create! valid_attributes
       get product_path(product)
+      pp '<pre>'
+      pp response.body
+      pp '</pre>'
       expect(response).to be_successful
     end
   end
