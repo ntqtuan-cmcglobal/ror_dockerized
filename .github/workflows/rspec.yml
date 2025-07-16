@@ -36,12 +36,6 @@ jobs:
       - name: Install dependencies
         run: |
           bundle install
-      - name: Build tailwindcss
-        run: |
-          bundle exec rails tailwindcss:build
       - name: Run tests
         run: |
-          bundle exec rspec
-      - name: Clean assets
-        run: |
-          bundle exec rails assets:clobber
+          bundle exec rake spec

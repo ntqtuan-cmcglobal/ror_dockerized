@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'Products', type: :request do
   include Devise::Test::IntegrationHelpers
-  let(:user) { User.create!(full_name: Faker::Name.name, email: Faker::Internet.email, password: Faker::Internet.password, role: 'buyer') }
-  let(:category) { Category.create!(name: 'Electronics') }
+  let!(:user) { User.create!(full_name: Faker::Name.name, email: Faker::Internet.email, password: Faker::Internet.password, role: 'admin') }
+  let!(:category) { Category.create!(name: 'Electronics') }
   let(:valid_attributes) do
     { name: 'Laptop', price: 1000, user_id: user.id, category_id: category.id }
   end
