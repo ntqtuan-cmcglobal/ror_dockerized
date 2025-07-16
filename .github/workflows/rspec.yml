@@ -2,7 +2,7 @@ name: Run RSpec tests
 on: [push]
 jobs:
   run-rspec-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     services:
       postgres:
         image: postgres:13-alpine
