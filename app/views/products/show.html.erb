@@ -28,8 +28,12 @@
         <%= @product.category ? @product.category.name : "Uncategorized" %>
       </p>
       <div class="flex space-x-2">
-        <%= link_to 'Back to Homepage', root_path, class: "inline-block px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300" %>
-        <%= link_to 'Back to Products', products_path, class: "inline-block px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300" %>
+        <% if current_user&.buyer? %>
+          <% in_cart = current_user.cart.cart_items.exists?(product_id: @product.id) %>
+          <%= button_to 'Add to Cart', add_item_cart_path(product_id: @product.id), method: :post, class: "inline-block px-4 py-2 rounded #{in_cart ? 'bg-gray-400 text-gray-700 cursor-not-allowed opacity-50' : 'bg-green-600 text-white hover:bg-green-700'}", disabled: in_cart %>
+        <% end %>
+        <%= link_to 'Back to Homepage', root_path, class: "inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200" %>
+        <%= link_to 'Back to Products', products_path, class: "inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200" %>
       </div>
     </div>
   </div>

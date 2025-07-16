@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   # Associations
   has_many :products, dependent: :destroy
+  has_one :cart, dependent: :destroy
 
   def admin?
     role == 'admin'

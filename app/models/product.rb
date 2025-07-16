@@ -6,6 +6,7 @@ class Product < ApplicationRecord
   # Associations
   # has_many :orders, dependent: :destroy
   belongs_to :user
+  has_many :cart_items, dependent: :destroy
 
   belongs_to :category, optional: true
 
