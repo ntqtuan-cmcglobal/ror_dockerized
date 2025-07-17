@@ -1,12 +1,11 @@
 class CartsController < ApplicationController
   include CartsHelper
 
-  # Ensure the user is authenticated before accessing cart actions
   before_action :authenticate_user!
-  # Initialize the cart for the user
   before_action :set_cart
 
   def show
+    authorize @cart
     @cart_items = @cart.cart_items.includes(:product)
     @total_price = @cart.total_price
   end
@@ -16,6 +15,7 @@ class CartsController < ApplicationController
     if product.present? && current_user.buyer?
       @cart.user = current_user unless @cart.persisted?
       @cart.save! unless @cart.persisted?
+      authorize @cart, :add_item?
       @cart.cart_items.find_or_create_by(product: product) do |item|
         item.quantity = 1
       end
@@ -28,6 +28,7 @@ class CartsController < ApplicationController
   end
 
   def remove_item
+    authorize @cart, :remove_item?
     item = @cart.cart_items.find_by(product_id: params[:product_id])
     item&.destroy
     redirect_to cart_path(@cart)

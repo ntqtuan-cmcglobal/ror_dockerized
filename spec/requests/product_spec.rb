@@ -88,17 +88,27 @@ RSpec.describe 'Products', type: :request do
   end
 
   describe 'DELETE /products/:id' do
-    it 'destroys the requested product' do
-      product = Product.create! valid_attributes
+    it 'should destroy product and redirect to products_path with notice' do
+      product = Product.create!(name: 'Laptop', price: 1000, user_id: user.id, category_id: category.id)
+
       expect do
         delete product_path(product)
       end.to change(Product, :count).by(-1)
+
+      expect(response).to redirect_to(products_path)
+      expect(flash[:notice]).to eq('Product was successfully deleted.')
     end
 
-    it 'redirects to the products list' do
-      product = Product.create! valid_attributes
-      delete product_path(product)
-      expect(response).to redirect_to(products_url)
+    it 'should not destroy product and redirect to product with alert if destroy fails' do
+      product = Product.create!(name: 'Laptop', price: 1000, user_id: user.id, category_id: category.id)
+      allow_any_instance_of(Product).to receive(:destroy).and_return(false)
+
+      expect do
+        delete product_path(product)
+      end.not_to change(Product, :count)
+
+      expect(response).to redirect_to(product_path(product))
+      expect(flash[:alert]).to eq('Product could not be deleted.')
     end
   end
 end

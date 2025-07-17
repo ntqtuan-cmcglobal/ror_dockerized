@@ -20,7 +20,7 @@ class CategoryPolicy < ApplicationPolicy
   end
 
   def update?
-    user.present? && user.admin? == user
+    user.present? && user.admin?
   end
 
   def destroy?

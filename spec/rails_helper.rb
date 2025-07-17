@@ -1,6 +1,21 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-require 'spec_helper'
 require 'simplecov'
+SimpleCov.start do
+  add_filter 'spec/'
+  add_filter 'config/'
+  add_filter 'vendor/'
+
+  add_group 'Controllers', 'app/controllers'
+  add_group 'Models', 'app/models'
+  add_group 'Helpers', 'app/helpers'
+  add_group 'Mailers', 'app/mailers'
+  add_group 'Policies', 'app/policies'
+  add_group 'Jobs', 'app/jobs'
+  add_group 'Channels', 'app/channels'
+end
+SimpleCov.coverage_dir 'public/coverage'
+
+require 'spec_helper'
 require 'pundit/rspec'
 require 'byebug'
 ENV['RAILS_ENV'] ||= 'test'
@@ -62,32 +77,10 @@ RSpec.configure do |config|
   # https://rspec.info/features/8-0/rspec-rails
   #
   # You can also this infer these behaviours automatically by location, e.g.
-  # /spec/models would pull in the same behaviour as `type: :model` but this
-  # behaviour is considered legacy and will be removed in a future version.
-  #
-  # To enable this behaviour uncomment the line below.
-  # config.infer_spec_type_from_file_location!
-
-  # Filter lines from Rails gems in backtraces.
-  config.filter_rails_from_backtrace!
-  # arbitrary gems may also be filtered via:
-  # config.filter_gems_from_backtrace("gem name")
-end
-
-SimpleCov.start do
-  add_filter '/test/'
-  add_filter '/config/'
-  add_filter '/vendor/'
-
-  add_group 'Controllers', 'app/controllers'
-  add_group 'Models', 'app/models'
-  add_group 'Helpers', 'app/helpers'
-  add_group 'Mailers', 'app/mailers'
 end
 # OPTIONAL
 # This outputs the report to your public folder
 # You will want to add this to .gitignore
-SimpleCov.coverage_dir 'public/coverage'
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
