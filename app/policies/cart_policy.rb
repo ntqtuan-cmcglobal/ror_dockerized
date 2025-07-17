@@ -22,6 +22,10 @@ class CartPolicy
     buyer? && cart.user == user
   end
 
+  def remove_item?
+    buyer? && cart.user == user
+  end
+
   private
 
   def buyer?
