@@ -9,6 +9,8 @@ Rails.application.routes.draw do
     delete 'remove_item/:product_id', to: 'carts#remove_item', as: 'remove_item'
   end
 
+  resources :orders
+
   # resources :blogs
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

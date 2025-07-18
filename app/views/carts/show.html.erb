@@ -1,38 +1,39 @@
 <div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
   <h1 class="text-3xl font-bold mb-6 text-blue-700">Your Shopping Cart</h1>
   <% if @cart.cart_items.any? %>
-    <table class="min-w-full divide-y divide-gray-200 mb-6">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-          <th class="px-6 py-3"></th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        <% @cart.cart_items.each do |item| %>
+    <%= form_with url: orders_path, method: :post, scope: :order ,local: true do |f| %>
+      <%= f.hidden_field :cart_id, value: @cart.id %>
+      <table class="min-w-full divide-y divide-gray-200 mb-6">
+        <thead class="bg-gray-50">
           <tr>
-            <td class="px-6 py-4 whitespace-nowrap"><%= item.product.name %></td>
-            <td class="px-6 py-4 whitespace-nowrap"><%= item.quantity %></td>
-            <td class="px-6 py-4 whitespace-nowrap"><%= number_to_currency(item.product.price) %></td>
-            <td class="px-6 py-4 whitespace-nowrap"><%= number_to_currency(item.product.price * item.quantity) %></td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <%= button_to 'Remove', remove_item_cart_path(item.product_id), method: :delete, class: "text-red-600 hover:text-red-800 font-semibold" %>
-            </td>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+            <th class="px-6 py-3"></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-    <div class="flex justify-between items-center">
-      <div class="text-xl font-semibold text-gray-700">
-        Total: <%= number_to_currency(@cart.total_price) %>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @cart.cart_items.each_with_index do |item, idx| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap"><%= item.product.name %></td>
+              <td class="px-6 py-4 whitespace-nowrap"><%= item.quantity %></td>
+              <td class="px-6 py-4 whitespace-nowrap"><%= number_to_currency(item.product.price) %></td>
+              <td class="px-6 py-4 whitespace-nowrap"><%= number_to_currency(item.product.price * item.quantity) %></td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= link_to 'Remove', remove_item_cart_path(item.product_id), method: :delete, data: { confirm: 'Are you sure?', turbo: false }, class: "text-red-600 hover:text-red-800 font-semibold cursor-pointer" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="flex justify-between items-center">
+        <div class="text-xl font-semibold text-gray-700">
+          Total: <%= number_to_currency(@cart.total_price) %>
+        </div>
+        <%= submit_tag 'Place Order', class: "inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 cursor-pointer" %>
       </div>
-      <button class="bg-gray-400 text-white px-6 py-2 rounded font-bold cursor-not-allowed" disabled>
-        Checkout (Coming Soon)
-      </button>
-    </div>
+    <% end %>
   <% else %>
     <div class="text-center text-gray-500 py-12">
       Your cart is empty.
