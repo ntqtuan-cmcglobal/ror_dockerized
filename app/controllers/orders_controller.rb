@@ -10,7 +10,7 @@ class OrdersController < ApplicationController
 
     @order = Order.new(
       user_id: current_user.id,
-      status: 'pending',
+      status: OrderStatus::UNPAID,
       total_price: @cart.cart_items.sum { |item| item.quantity * item.product.price }
     )
 

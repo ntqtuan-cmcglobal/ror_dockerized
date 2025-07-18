@@ -40,9 +40,9 @@
       <ul class="flex space-x-4 items-center ml-8">
         <% if user_signed_in? %>
           <li>
-            <span class="text-gray-600 px-3 py-2">
+            <%= link_to '/users/edit', class: "text-gray-600 px-3 py-2 hover:text-blue-600 transition-colors duration-200", title: "Profile" do %>
               Hello, <%= current_user.full_name %> (<%= current_user.role.capitalize %>)
-            </span>
+            <% end %>
           </li>
           <li>
             <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "text-gray-700 hover:text-blue-600 px-3 py-2 rounded transition-colors duration-200" %>

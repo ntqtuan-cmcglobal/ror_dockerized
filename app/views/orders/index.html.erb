@@ -16,17 +16,27 @@
           <% @orders.each do |order| %>
             <tr class="hover:bg-gray-100">
               <td class="px-6 py-4 border-b border-gray-200">
-                <%= link_to order.id, order_path(order), class: "text-blue-600 hover:underline" %>
+                <%= order.id %>
               </td>
               <td class="px-6 py-4 border-b border-gray-200"><%= order.created_at.strftime("%Y-%m-%d") %></td>
               <td class="px-6 py-4 border-b border-gray-200">
-                <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full <%= order.status == 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                <% status_classes = {
+                  'unpaid'    => 'bg-red-100 text-red-800',
+                  'paid'      => 'bg-blue-100 text-blue-800',
+                  'pending'   => 'bg-yellow-100 text-yellow-800',
+                  'cancelled' => 'bg-gray-200 text-gray-600',
+                  'completed' => 'bg-green-100 text-green-800'
+                } %>
+                <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full <%= status_classes[order.status] || 'bg-gray-100 text-gray-800' %>">
                   <%= order.status.titleize %>
                 </span>
               </td>
               <td class="px-6 py-4 border-b border-gray-200"><%= number_to_currency(order.total_price) %></td>
-              <td class="px-6 py-4 border-b border-gray-200 text-right">
+              <td class="px-6 py-4 border-b border-gray-200 text-right space-x-2">
                 <%= link_to 'View', order_path(order), class: "inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" %>
+                <% if order.status == 'unpaid' %>
+                  <%= link_to 'Go to Payment', '/', class: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" %>
+                <% end %>
               </td>
             </tr>
           <% end %>
