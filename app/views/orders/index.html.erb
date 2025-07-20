@@ -35,7 +35,7 @@
               <td class="px-6 py-4 border-b border-gray-200 text-right space-x-2">
                 <%= link_to 'View', order_path(order), class: "inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" %>
                 <% if order.status == 'unpaid' %>
-                  <%= link_to 'Go to Payment', '/', class: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" %>
+                  <%= link_to 'Go to Payment', new_with_order_payments_path(order_id: order.id), class: "inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" %>
                 <% end %>
               </td>
             </tr>

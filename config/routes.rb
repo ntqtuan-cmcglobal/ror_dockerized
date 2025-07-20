@@ -10,6 +10,11 @@ Rails.application.routes.draw do
   end
 
   resources :orders
+  resources :payments, except: [:destroy] do
+    collection do
+      get 'new/:order_id', to: 'payments#new', as: 'new_with_order'
+    end
+  end
 
   # resources :blogs
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
