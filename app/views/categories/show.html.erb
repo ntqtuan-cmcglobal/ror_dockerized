@@ -14,6 +14,8 @@
   </div>
 <% end %>
 <div class="flex space-x-4">
-  <%= link_to 'Edit Category', edit_category_path(@category), class: "bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded" %>
+  <% if policy(@category).edit? %>
+    <%= link_to 'Edit Category', edit_category_path(@category), class: "bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded" %>
+  <% end %>
   <%= link_to 'Back to Categories', categories_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded" %>
 </div>

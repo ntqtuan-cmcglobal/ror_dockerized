@@ -13,19 +13,17 @@ Rails.application.configure do
   config.consider_all_requests_local = true
 
   # Mail configuration
-  config.action_mailer.delivery_method = :sendmail
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_options = { from: 'ror-dam@spacemail.com' }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: 'sandbox.smtp.mailtrap.io',
-    port: 587,
-    domain: 'example.com',
     user_name: 'a7a512d34d3d39',
     password: '502d45b76a1cd5',
-    authentication: 'plain',
-    enable_starttls_auto: true
+    address: 'sandbox.smtp.mailtrap.io',
+    host: 'sandbox.smtp.mailtrap.io',
+    port: '2525',
+    authentication: :login
   }
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
 
