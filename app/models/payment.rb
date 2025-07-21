@@ -1,12 +1,21 @@
 class Payment < ApplicationRecord
-    # Associations
-    belongs_to :user, optional: true
-    belongs_to :order, optional: true
+  # Associations
+  belongs_to :user, optional: true
+  belongs_to :order, optional: true
 
-    # Validations
-    validates :amount, presence: true, numericality: { greater_than: 0 }
-    validates :status, presence: true
+  # Validations
+  validates :result, presence: true
 
-    # Scopes
-    scope :recent, -> { order(created_at: :desc) }
+  before_create :set_default_result
+
+  private
+
+  def set_default_result
+    self.result ||= 'success' if payment_method == 'bank_transfer'
+
+    self.result ||= 'undefined'
+  end
+
+  # Scopes
+  scope :recent, -> { order(created_at: :desc) }
 end

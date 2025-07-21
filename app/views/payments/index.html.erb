@@ -1,0 +1,35 @@
+<% if params[:order_id].present? %>
+  <h1 class="text-2xl font-bold mb-6">Payments for Order #<%= params[:order_id] %></h1>
+  <% if @payments.any? %>
+    <table class="min-w-full bg-white border border-gray-200 rounded shadow">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 border-b text-left bg-gray-50">ID</th>
+          <th class="px-4 py-2 border-b text-left bg-gray-50">Order</th>
+          <th class="px-4 py-2 border-b text-left bg-gray-50">Result</th>
+          <th class="px-4 py-2 border-b text-left bg-gray-50">Payment Method</th>
+          <th class="px-4 py-2 border-b text-left bg-gray-50">Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payments.each do |payment| %>
+          <tr class="hover:bg-gray-100">
+            <td class="px-4 py-2 border-b"><%= payment.id %></td>
+            <td class="px-4 py-2 border-b"><%= payment.order_id %></td>
+            <td class="px-4 py-2 border-b" style="background-color: <%= PaymentStatus.color_for(payment.result) %>; color: white;">
+              <%= payment.result %>
+            </td>
+            <td class="px-4 py-2 border-b">
+              <%= PaymentMethod.method_name(payment.payment_method) %>
+            </td>
+            <td class="px-4 py-2 border-b"><%= payment.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-gray-500 mt-4">No payments found for this order.</p>
+  <% end %>
+<% else %>
+  <p class="text-red-600 font-semibold">Order ID parameter is required.</p>
+<% end %>

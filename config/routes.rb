@@ -9,7 +9,10 @@ Rails.application.routes.draw do
     delete 'remove_item/:product_id', to: 'carts#remove_item', as: 'remove_item'
   end
 
-  resources :orders
+  resources :orders do
+    resources :payments, except: [:destroy]
+  end
+
   resources :payments, except: [:destroy] do
     collection do
       get 'new/:order_id', to: 'payments#new', as: 'new_with_order'

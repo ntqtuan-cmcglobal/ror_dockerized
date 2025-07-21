@@ -12,6 +12,9 @@
     <span class="font-semibold text-gray-700">Status:</span>
     <span class="ml-2 px-2 py-1 rounded bg-blue-100 text-blue-800 text-sm"><%= @order.status.titleize %></span>
   </div>
+  <div class="mb-4">
+    <%= link_to "View Payment Detail", order_payments_path(@order), class: "text-blue-600 hover:underline font-medium" %>
+  </div>
   <h2 class="text-xl font-semibold mb-4 text-gray-800">Items</h2>
   <table class="min-w-full mb-6">
     <thead>

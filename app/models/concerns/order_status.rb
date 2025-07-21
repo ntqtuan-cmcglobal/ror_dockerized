@@ -1,7 +1,7 @@
 module OrderStatus
-  UNPAID     = 'unpaid'
-  PAID       = 'paid'
-  PENDING    = 'pending'
-  CANCELLED  = 'cancelled'
-  COMPLETED  = 'completed'
+  UNPAID     = 'unpaid'.freeze
+  PAID       = 'paid'.freeze
+  PENDING    = 'pending'.freeze
+  CANCELLED  = 'cancelled'.freeze
+  COMPLETED  = 'completed'.freeze
 end

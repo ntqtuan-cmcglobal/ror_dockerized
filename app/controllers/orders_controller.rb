@@ -27,11 +27,6 @@ class OrdersController < ApplicationController
       @cart.cart_items.destroy_all
       redirect_to @order, notice: 'Order was successfully created from cart.'
     else
-      pp '<pre>'
-      pp @order
-      pp @order.errors.full_messages
-      pp '</pre>'
-      debugger
       redirect_to @cart, alert: 'Failed to create order. Please check your input.'
     end
   end
