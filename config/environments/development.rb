@@ -76,4 +76,6 @@ Rails.application.configure do
 
   config.time_zone = 'Hanoi'
   config.active_record.default_timezone = :local
+
+  config.active_storage.service = :minio
 end

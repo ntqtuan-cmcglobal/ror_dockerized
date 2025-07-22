@@ -8,6 +8,9 @@ class User < ApplicationRecord
   has_many :products, dependent: :destroy
   has_one :cart, dependent: :destroy
 
+  # Active Storage
+  has_one_attached :avatar
+
   def admin?
     role == 'admin'
   end

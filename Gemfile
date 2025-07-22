@@ -54,6 +54,8 @@ gem 'jquery-rails', '~> 4.6.0'
 
 gem 'pundit', '~> 2.5.0'
 
+gem 'aws-sdk-s3'
+
 # tailwindcss
 gem 'cssbundling-rails'
 gem 'jsbundling-rails'

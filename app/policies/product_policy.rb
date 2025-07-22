@@ -8,22 +8,22 @@ class ProductPolicy < Struct.new(:user, :product)
   end
 
   def new?
-    user.present? && (user.admin? || user.seller?)
+    user.admin? || user.seller?
   end
 
   def create?
-    user.present? && (user.admin? || user.seller?)
+    user.admin? || user.seller?
   end
 
   def edit?
-    user.present? && (user.admin? || user.seller? && product.owned_by?(user))
+    (user.admin? || user.seller?) && product.owned_by?(user)
   end
 
   def update?
-    user.present? && (user.admin? || user.seller? && product.owned_by?(user))
+    (user.admin? || user.seller?) && product.owned_by?(user)
   end
 
   def destroy?
-    user.present? && (user.admin? || user.seller? && product.owned_by?(user))
+    user.admin? || user.seller? && product.owned_by?(user)
   end
 end

@@ -21,6 +21,14 @@ class OrderPolicy
     user.admin? || user.buyer?
   end
 
+  def can_cancel?
+    is_protected_order_status = order.status != OrderStatus::COMPLETED && order.status != OrderStatus::CANCELLED
+
+    user.admin? || (user.buyer? && order.user_id == user.id && is_protected_order_status) || (user.seller? && order.order_items.any? do |item|
+      item.product.user_id == user.id && is_protected_order_status
+    end)
+  end
+
   # Scope class for limiting the records visible to the user.
   class Scope < ApplicationPolicy::Scope
     def resolve

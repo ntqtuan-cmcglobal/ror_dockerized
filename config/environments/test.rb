@@ -58,4 +58,6 @@ Rails.application.configure do
     authentication: :login
   }
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
+
+  config.active_storage.service = :test
 end

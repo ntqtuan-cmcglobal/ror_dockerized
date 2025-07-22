@@ -10,6 +10,10 @@ Rails.application.routes.draw do
   end
 
   resources :orders do
+    member do
+      post 'cancel', to: 'orders#cancel_order', as: 'cancel'
+    end
+
     resources :payments, except: [:destroy]
   end
 
@@ -18,6 +22,8 @@ Rails.application.routes.draw do
       get 'new/:order_id', to: 'payments#new', as: 'new_with_order'
     end
   end
+
+  get 'selling-point', to: 'pages#selling_point', as: 'selling_point'
 
   # resources :blogs
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

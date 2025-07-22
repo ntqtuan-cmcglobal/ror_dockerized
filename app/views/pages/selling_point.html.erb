@@ -1,0 +1,67 @@
+<%# app/views/pages/selling_point.html.erb %>
+<% status_classes = {
+  'unpaid'    => 'bg-red-100 text-red-800',
+  'paid'      => 'bg-blue-100 text-blue-800',
+  'pending'   => 'bg-yellow-100 text-yellow-800',
+  'cancelled' => 'bg-gray-200 text-gray-600',
+  'completed' => 'bg-green-100 text-green-800'
+} %>
+<% if user_signed_in? && current_user.seller? %>
+  <div class="max-w-4xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">Your Selling Products</h1>
+    <% if @order_items.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-lg shadow">
+          <thead>
+            <tr>
+              <th class="px-4 py-2 text-left font-semibold">Product</th>
+              <th class="px-4 py-2 text-left font-semibold">Price</th>
+              <th class="px-4 py-2 text-left font-semibold">Buyer</th>
+              <th class="px-4 py-2 text-left font-semibold">Status</th>
+              <th class="px-4 py-2 text-left font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @order_items.each do |order_item| %>
+              <tr class="border-t">
+                <td class="px-4 py-2"><%= order_item.product.name %></td>
+                <td class="px-4 py-2 text-green-600 font-bold">$<%= order_item.price %></td>
+                <td class="px-4 py-2">
+                  <% if order_item.order && order_item.order.user %>
+                    <%= order_item.order.user.full_name %> (<%= order_item.order.user.email %>)
+                  <% else %>
+                    N/A
+                  <% end %>
+                </td>
+                <td class="px-4 py-2">
+                  <% if order_item.order && order_item.order.status.present? %>
+                    <% status = order_item.order.status %>
+                    <% css = status_classes[status] || 'bg-gray-100 text-gray-800' %>
+                    <span class="px-2 py-1 rounded text-xs font-semibold <%= css %>">
+                      <%= status.humanize %>
+                    </span>
+                    <%= link_to order_payments_path(order_item.order), class: "text-blue-600 hover:underline font-medium ml-2", title: "Payment details", target: "_blank", rel: "noopener" do %>
+                      <span aria-hidden="true">💵</span>
+                    <% end %>
+                  <% else %>
+                    N/A
+                  <% end %>
+                </td>
+                <td class="px-4 py-2 flex items-center space-x-2">
+                  <%= button_to "Confirm delivery", "#", class: "inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-green-400 cursor-not-allowed", disabled: true %>
+                  <%= button_to "Cancel", cancel_order_path(order_item.order), method: :post, class: "inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer", data: { confirm: "Are you sure you want to cancel this order?" } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-gray-500">You have no products listed for sale.</p>
+    <% end %>
+  </div>
+<% else %>
+  <div class="max-w-xl mx-auto py-8">
+    <p class="text-red-600 font-semibold">You must be logged in as a seller to view your selling products.</p>
+  </div>
+<% end %>
