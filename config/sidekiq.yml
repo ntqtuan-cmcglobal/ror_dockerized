@@ -1,0 +1,7 @@
+# config/sidekiq.yml
+
+:schedule:
+  remove_unused_assets:
+    cron: "0 * * * *"
+    args: []
+    class: RemoveUnusedAssetsJob

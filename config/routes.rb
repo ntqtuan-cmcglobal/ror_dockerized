@@ -1,8 +1,13 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
+  mount Sidekiq::Web => '/sidekiq'
+
   devise_for :users, controllers: { registrations: 'users/registrations' }
   root to: 'pages#index'
   resources :products
   resources :categories
+  resources :uploads, only: %i[index new create]
 
   resource :cart, only: [:show] do
     post 'add_item/:product_id', to: 'carts#add_item', as: 'add_item'

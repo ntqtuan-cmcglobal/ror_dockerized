@@ -9,6 +9,8 @@ services:
       - ./tmp/db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - myapp_network
   web:
     build: .
     volumes:
@@ -18,6 +20,10 @@ services:
     depends_on:
       - db
     command: rails server -b 0.0.0.0
+    stdin_open: true
+    tty: true
+    networks:
+      - myapp_network
   redis:
     image: redis:latest
     container_name: ror-redis
@@ -25,6 +31,8 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - myapp_network
   minio:
     image: minio/minio
     container_name: minio
@@ -37,10 +45,15 @@ services:
     volumes:
       - ./storage:/data
     command: server --console-address ":9001" /data
+    networks:
+      myapp_network:
+        aliases:
+          - my-minio-localhost-alias
 networks:
-  minio:
+  myapp_network:
     driver: bridge
 volumes:
   redis_data:
+    driver: local
   minio_data:
     driver: local

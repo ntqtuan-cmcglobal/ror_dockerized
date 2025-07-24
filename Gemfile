@@ -56,10 +56,17 @@ gem 'pundit', '~> 2.5.0'
 
 gem 'aws-sdk-s3'
 
+# sidekiq
+gem 'sidekiq'
+gem 'sidekiq-scheduler'
+
 # tailwindcss
 gem 'cssbundling-rails'
 gem 'jsbundling-rails'
 gem 'tailwindcss-rails'
+
+gem 'image_processing'
+gem 'streamio-ffmpeg'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'

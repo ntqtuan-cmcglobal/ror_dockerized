@@ -2,7 +2,7 @@ class ProductsController < ApplicationController
   before_action :authenticate_user!, only: %i[index new create edit update destroy]
 
   def index
-    @products = Product.all
+    @products = Product.order(created_at: :desc)
     authorize @products
   end
 
@@ -23,7 +23,18 @@ class ProductsController < ApplicationController
     @product.user = current_user
     authorize @product
 
+    if params[:product][:digital_asset].present?
+      # upload to MinIO using ActiveStorage
+      @product.digital_asset.attach(params[:product][:digital_asset])
+
+    elsif @product.digital_asset.attached?
+      @product.digital_asset.detach
+    end
+
     if @product.save
+      if @product.digital_asset.attached? && @product.digital_asset.content_type.start_with?('video/')
+        @product.generate_video_thumbnail
+      end
       redirect_to @product, notice: 'Product was successfully created.'
     else
       render :new
@@ -40,7 +51,18 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
     authorize @product
 
+    if params[:product][:digital_asset].present?
+      uploaded_file = params[:product][:digital_asset]
+      @product.digital_asset.attach(uploaded_file)
+
+    elsif @product.digital_asset.attached?
+      @product.digital_asset.detach
+    end
+
     if @product.update(product_params)
+      if @product.digital_asset.attached? && @product.digital_asset.content_type.start_with?('video/')
+        @product.generate_video_thumbnail
+      end
       redirect_to @product, notice: 'Product was successfully updated.'
     else
       render :edit
@@ -61,6 +83,6 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-    params.require(:product).permit(:name, :description, :price, :category_id)
+    params.require(:product).permit(:name, :description, :price, :category_id, :digital_asset)
   end
 end

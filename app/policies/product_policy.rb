@@ -16,14 +16,14 @@ class ProductPolicy < Struct.new(:user, :product)
   end
 
   def edit?
-    (user.admin? || user.seller?) && product.owned_by?(user)
+    user.admin? || (user.seller? && product.owned_by?(user))
   end
 
   def update?
-    (user.admin? || user.seller?) && product.owned_by?(user)
+    user.admin? || (user.seller? && product.owned_by?(user))
   end
 
   def destroy?
-    user.admin? || user.seller? && product.owned_by?(user)
+    user.admin? || (user.seller? && product.owned_by?(user))
   end
 end

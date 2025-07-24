@@ -140,6 +140,8 @@ GEM
     drb (2.2.3)
     erb (5.0.2)
     erubi (1.13.1)
+    et-orbi (1.2.11)
+      tzinfo
     execjs (2.10.0)
     factory_bot (6.5.4)
       activesupport (>= 6.1.0)
@@ -149,6 +151,9 @@ GEM
     faker (3.5.2)
       i18n (>= 1.8.11, < 2)
     ffi (1.17.2-x86_64-linux-gnu)
+    fugit (1.11.1)
+      et-orbi (~> 1, >= 1.2.11)
+      raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
     haml (6.3.0)
@@ -157,6 +162,9 @@ GEM
       tilt
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
+    image_processing (1.14.0)
+      mini_magick (>= 4.9.5, < 6)
+      ruby-vips (>= 2.0.17, < 3)
     io-console (0.8.1)
     irb (1.15.2)
       pp (>= 0.6.0)
@@ -189,9 +197,12 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.3)
+    mini_magick (5.3.0)
+      logger
     mini_mime (1.1.5)
     minitest (5.25.5)
     msgpack (1.8.0)
+    multi_json (1.17.0)
     mutex_m (0.3.0)
     net-imap (0.5.9)
       date
@@ -224,6 +235,7 @@ GEM
       nio4r (~> 2.0)
     pundit (2.5.0)
       activesupport (>= 3.0.0)
+    raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.16)
     rack-session (2.1.1)
@@ -277,6 +289,8 @@ GEM
       erb
       psych (>= 4.0.0)
     redis (4.8.1)
+    redis-client (0.25.1)
+      connection_pool
     regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
@@ -316,7 +330,12 @@ GEM
       parser (>= 3.3.7.2)
       prism (~> 1.4)
     ruby-progressbar (1.13.0)
+    ruby-vips (2.2.4)
+      ffi (~> 1.12)
+      logger
     rubyzip (2.4.1)
+    rufus-scheduler (3.9.2)
+      fugit (~> 1.1, >= 1.11.1)
     sassc (2.4.0)
       ffi (~> 1.9)
     securerandom (0.4.1)
@@ -326,6 +345,15 @@ GEM
       websocket (~> 1.0)
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)
+    sidekiq (8.0.6)
+      connection_pool (>= 2.5.0)
+      json (>= 2.9.0)
+      logger (>= 1.6.2)
+      rack (>= 3.1.0)
+      redis-client (>= 0.23.2)
+    sidekiq-scheduler (6.0.1)
+      rufus-scheduler (~> 3.2)
+      sidekiq (>= 7.3, < 9)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -344,6 +372,8 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
+    streamio-ffmpeg (3.0.2)
+      multi_json (~> 1.8)
     stringio (3.1.7)
     syntax_tree (6.3.0)
       prettier_print (>= 1.2.0)
@@ -411,6 +441,7 @@ DEPENDENCIES
   devise (~> 4.9)
   factory_bot_rails
   faker
+  image_processing
   io-console
   jbuilder (~> 2.5)
   jquery-rails (~> 4.6.0)
@@ -427,10 +458,13 @@ DEPENDENCIES
   rspec-rails
   rubocop (~> 1.77)
   shoulda-matchers
+  sidekiq
+  sidekiq-scheduler
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
   sprockets-rails
+  streamio-ffmpeg
   syntax_tree (~> 6.2)
   syntax_tree-haml (~> 4.0)
   syntax_tree-rbs (~> 1.0)
