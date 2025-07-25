@@ -51,17 +51,11 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
     authorize @product
 
-    if params[:product][:digital_asset].present?
-      uploaded_file = params[:product][:digital_asset]
-      @product.digital_asset.attach(uploaded_file)
-
-    elsif @product.digital_asset.attached?
-      @product.digital_asset.detach
-    end
+    @product.digital_asset.detach if @product.digital_asset.attached?
 
     if @product.update(product_params)
       if @product.digital_asset.attached? && @product.digital_asset.content_type.start_with?('video/')
-        @product.generate_video_thumbnail
+        VideoThumbnailGenerateJob.perform_async(@product.id)
       end
       redirect_to @product, notice: 'Product was successfully updated.'
     else

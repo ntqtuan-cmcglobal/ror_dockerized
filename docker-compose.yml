@@ -1,4 +1,3 @@
-version: "3"
 services:
   db:
     image: postgres
@@ -31,6 +30,16 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - myapp_network
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq
+    volumes:
+      - .:/myapp
+    depends_on:
+      - redis
+      - db
     networks:
       - myapp_network
   minio:

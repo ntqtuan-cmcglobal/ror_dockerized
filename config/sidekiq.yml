@@ -1,7 +1,18 @@
 # config/sidekiq.yml
 
-:schedule:
-  remove_unused_assets:
-    cron: "0 * * * *"
-    args: []
-    class: RemoveUnusedAssetsJob
+:verbose: false
+:pidfile: ./tmp/pids/sidekiq.pid
+:logfile: ./log/sidekiq.log
+:concurrency: 10
+
+:queues:
+  - default
+  - video_thumbnail_generation
+
+:scheduler:
+  :schedule:
+    remove_unused_assets:
+      cron: "* * * * *" # Every minute
+      class: RemoveUnusedAssetsJob
+      queue: default
+      description: "Remove unused assets from storage"
