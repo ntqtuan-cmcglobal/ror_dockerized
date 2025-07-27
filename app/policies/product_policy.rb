@@ -26,4 +26,8 @@ class ProductPolicy < Struct.new(:user, :product)
   def destroy?
     user.admin? || (user.seller? && product.owned_by?(user))
   end
+
+  def publish?
+    user.admin? || (user.seller? && product.owned_by?(user) && !product.is_draft?)
+  end
 end

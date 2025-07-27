@@ -9,7 +9,7 @@
           <% content_type = @product.digital_asset.content_type %>
           <% if content_type.start_with?('video/') %>
             <div class="w-full max-w-2xl aspect-video rounded-xl shadow-lg overflow-hidden bg-black flex items-center justify-center">
-              <%= video_tag url_for(@product.digital_asset), controls: true, class: "w-full h-full object-contain" do %>
+              <%= video_tag url_for(@product.digital_asset), controls: true, class: "w-full h-full object-contain", controlsList: "nodownload" do %>
                 Your browser does not support the video tag.
               <% end %>
             </div>
