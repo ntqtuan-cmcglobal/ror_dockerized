@@ -16,7 +16,7 @@
           <tr class="hover:bg-gray-100">
             <td class="px-4 py-2 border-b"><%= payment.id %></td>
             <td class="px-4 py-2 border-b"><%= payment.order_id %></td>
-            <td class="px-4 py-2 border-b" style="background-color: <%= PaymentStatus.color_for(payment.result) %>; color: white;">
+            <td class="px-4 py-2 border-b" style="background-color: <%= PaymentResult.color_for(payment.result) %>; color: white;">
               <%= payment.result %>
             </td>
             <td class="px-4 py-2 border-b">

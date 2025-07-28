@@ -1,4 +1,4 @@
-module PaymentStatus
+module PaymentResult
   PENDING = 'pending'.freeze
   SUCCESS = 'success'.freeze
   ERROR   = 'error'.freeze

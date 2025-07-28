@@ -5,6 +5,7 @@ class Product < ApplicationRecord
 
   # Attachments
   has_one_attached :digital_asset
+  has_one_attached :digital_asset_demo
   has_one_attached :video_thumbnail
 
   # Associations
@@ -20,10 +21,6 @@ class Product < ApplicationRecord
     self.user == user
   end
 
-  def is_draft?
-    is_draft
-  end
-
   def generate_video_thumbnail
     return unless digital_asset.attached? && digital_asset.content_type.start_with?('video/')
 
@@ -35,5 +32,21 @@ class Product < ApplicationRecord
     video_thumbnail.attach(io: File.open(thumb_file.path), filename: 'thumbnail.jpg', content_type: 'image/jpeg')
     thumb_file.close
     thumb_file.unlink
+  end
+
+  def generate_digital_asset_demo
+    return unless digital_asset.attached?
+
+    puts "Generating demo for digital asset: #{digital_asset.filename}"
+
+    demo_file, content_type, extension = FfmpegService.generate_demo(digital_asset)
+    filename = "demo.#{extension}"
+
+    digital_asset_demo.attach(io: File.open(demo_file.path), filename: filename, content_type: content_type)
+    demo_file.close
+    demo_file.unlink
+  rescue StandardError => e
+    Rails.logger.error "Failed to generate digital asset demo for product #{id}: #{e.message}"
+    errors.add(:base, "Failed to generate digital asset demo: #{e.message}")
   end
 end

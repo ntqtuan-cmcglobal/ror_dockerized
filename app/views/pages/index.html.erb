@@ -6,20 +6,128 @@
   </section>
   <section class="w-full">
     <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Featured Products</h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <% @products.each do |product| %>
-        <% next if product.is_draft %>
-        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition h-[480px]">
-          <img src="<%= product.url || 'no-products-found.png' %>" alt="Product" class="mb-4 rounded-lg w-60 h-60 object-contain border border-gray-200">
-          <h4 class="text-lg font-semibold mb-2 text-center"><%= product.name %></h4>
-          <% truncated_description = truncate(product.description, length: 60, separator: ' ', omission: '...') %>
-          <p class="text-gray-600 text-center line-clamp-2 h-18"><%= truncated_description %></p>
-          <span class="text-blue-600 font-bold text-xl mb-4">$<%= product.price %></span>
-          <div class="mt-auto w-full flex justify-center">
-            <a href="<%= product_path(product) %>" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full max-w-xs text-center font-medium">Buy Now</a>
+        <% show_draft = (current_user&.admin? || current_user&.seller?) %>
+        <% is_draft = product.is_draft? %>
+        <% next if is_draft && current_user&.buyer? %>
+        <% if policy(product).show? %>
+          <% is_bought = current_user&.orders&.joins(:order_items)&.where(order_items: { product_id: product.id }, status: 'paid')&.exists? %>
+          <% is_owned = is_bought || product.user_id == current_user&.id %>
+          <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col
+            <%= 'border-4 border-yellow-400' if is_draft && show_draft %>
+            <%= ' ring-4 ring-green-400' if is_owned %>">
+            <% if is_draft && show_draft %>
+              <div class="px-4 py-2 bg-yellow-100 text-yellow-800 text-xs font-bold">
+                DRAFT PRODUCT
+              </div>
+            <% end %>
+            <% if is_owned %>
+              <div class="px-4 py-2 bg-green-100 text-green-800 text-xs font-bold">
+                OWNED
+              </div>
+            <% end %>
+            <% if product.digital_asset.attached? %>
+              <% if product.digital_asset.image? %>
+                <%= image_tag url_for(product.digital_asset.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+              <% elsif product.video_thumbnail.attached? %>
+                <%= image_tag url_for(product.video_thumbnail.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+              <% elsif product.digital_asset.audio? %>
+                <div class="flex flex-col items-center justify-center h-48 bg-gray-100">
+                  <%= image_tag "/music-placeholder.png", size: "80x80", class: "mb-2" %>
+                </div>
+              <% else %>
+                <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
+              <% end %>
+            <% else %>
+              <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
+            <% end %>
+            <div class="p-4 flex-1 flex flex-col">
+              <h2 class="text-lg font-semibold mb-1"><%= product.name %></h2>
+              <p class="text-gray-600 text-sm mb-2 line-clamp-2"><%= product.description %></p>
+              <div class="flex items-center justify-between mt-auto">
+                <span class="text-blue-600 font-bold"><%= number_to_currency(product.price) %></span>
+                <span class="text-xs text-gray-500"><%= product.category ? product.category.name : "Uncategorized" %></span>
+              </div>
+              <div class="mt-2 flex gap-2">
+                <%= link_to 'Show', product, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800 hover:bg-blue-200" if policy(product).show? %>
+                <%= link_to 'Edit', edit_product_path(product), class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800 hover:bg-yellow-200" if policy(product).edit? %>
+                <%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' }, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800 hover:bg-red-200" if policy(product).destroy? %>
+                <% if current_user&.buyer? %>
+                  <% in_cart = current_user.cart.cart_items.exists?(product_id: product.id) %>
+                  <% if is_owned %>
+                    <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-green-200 text-green-700 cursor-not-allowed">Owned</span>
+                  <% else %>
+                    <%= button_to 'Add to Cart', add_item_cart_path(product_id: product.id), method: :post, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded #{in_cart ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer'}", disabled: in_cart %>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+            <div class="px-4 pb-4 text-xs text-gray-400">
+              Seller: <%= product.user.full_name %>
+            </div>
           </div>
-        </div>
+        <% end %>
       <% end %>
+    </div>
+  </section>
+  <section class="w-full mt-16">
+    <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Why Choose Our Marketplace?</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+        <svg class="w-12 h-12 text-blue-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 8v4l3 3"></path>
+          <circle cx="12" cy="12" r="10"></circle>
+        </svg>
+        <h4 class="text-lg font-semibold mb-2">Fast & Secure Transactions</h4>
+        <p class="text-gray-600 text-center">Buy and sell digital assets with confidence using our secure payment system.</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+        <svg class="w-12 h-12 text-green-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M5 13l4 4L19 7"></path>
+          <circle cx="12" cy="12" r="10"></circle>
+        </svg>
+        <h4 class="text-lg font-semibold mb-2">Quality Products</h4>
+        <p class="text-gray-600 text-center">All products are reviewed to ensure top quality and originality.</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+        <svg class="w-12 h-12 text-yellow-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 17v-5l-4-4"></path>
+          <circle cx="12" cy="12" r="10"></circle>
+        </svg>
+        <h4 class="text-lg font-semibold mb-2">Supportive Community</h4>
+        <p class="text-gray-600 text-center">Join a vibrant community of creators and buyers, and get support when you need it.</p>
+      </div>
+    </div>
+  </section>
+  <section class="w-full mt-16">
+    <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">How It Works</h3>
+    <div class="flex flex-col md:flex-row justify-center items-stretch gap-8">
+      <div class="bg-white rounded-lg shadow p-6 flex-1">
+        <h4 class="text-lg font-semibold mb-2">1. Sign Up</h4>
+        <p class="text-gray-600">Create your free account to start buying or selling digital assets.</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-6 flex-1">
+        <h4 class="text-lg font-semibold mb-2">2. Browse & Purchase</h4>
+        <p class="text-gray-600">Explore our marketplace and purchase products that fit your needs.</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-6 flex-1">
+        <h4 class="text-lg font-semibold mb-2">3. Download & Enjoy</h4>
+        <p class="text-gray-600">Instantly download your purchased assets and start using them right away.</p>
+      </div>
+    </div>
+  </section>
+  <section class="w-full mt-16">
+    <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Content for Creators & Buyers</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h4 class="text-lg font-semibold mb-2">For Creators (Sellers)</h4>
+        <p class="text-gray-600">Upload your digital products, set your price, and reach a global audience. Our platform provides tools to manage your listings and track your sales easily.</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-6">
+        <h4 class="text-lg font-semibold mb-2">For Buyers</h4>
+        <p class="text-gray-600">Discover a wide range of high-quality digital assets. Enjoy secure payments, instant downloads, and dedicated support for all your purchases.</p>
+      </div>
     </div>
   </section>
 </main>

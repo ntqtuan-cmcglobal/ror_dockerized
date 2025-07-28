@@ -10,7 +10,15 @@
   </div>
   <div class="mb-4">
     <span class="font-semibold text-gray-700">Status:</span>
-    <span class="ml-2 px-2 py-1 rounded bg-blue-100 text-blue-800 text-sm"><%= @order.status.titleize %></span>
+    <% status_classes = {
+                  'unpaid'    => 'bg-red-100 text-red-800',
+                  'paid'      => 'bg-blue-100 text-blue-800',
+                  'cancelled' => 'bg-gray-200 text-gray-600',
+                  'completed' => 'bg-green-100 text-green-800'
+                } %>
+    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full <%= status_classes[@order.status] || 'bg-gray-100 text-gray-800' %>">
+      <%= @order.status.titleize %>
+    </span>
   </div>
   <div class="mb-4">
     <%= link_to "View Payment Detail", order_payments_path(@order), class: "text-blue-600 hover:underline font-medium" %>
@@ -28,7 +36,9 @@
     <tbody>
       <% @order.order_items.each do |item| %>
         <tr class="border-t">
-          <td class="py-2 px-4"><%= item.product.name %></td>
+          <td class="py-2 px-4">
+            <%= link_to item.product.name, product_path(item.product), class: "text-blue-600 hover:underline" %>
+          </td>
           <td class="py-2 px-4"><%= item.quantity %></td>
           <td class="py-2 px-4"><%= number_to_currency(item.price) %></td>
           <td class="py-2 px-4"><%= number_to_currency(item.price * item.quantity) %></td>

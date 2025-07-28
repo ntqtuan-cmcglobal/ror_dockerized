@@ -31,6 +31,9 @@ class PaymentsController < ApplicationController
 
   def create
     @payment = Payment.new(payment_params)
+
+    @payment.result = PaymentResult::SUCCESS if @payment.payment_method == 'bank_transfer'
+
     if @payment.save
       # Update order status to paid
       @order = Order.find(@payment.order_id)

@@ -32,8 +32,11 @@ class ProductsController < ApplicationController
     end
 
     if @product.save
-      if @product.digital_asset.attached? && @product.digital_asset.content_type.start_with?('video/')
-        @product.generate_video_thumbnail
+      if @product.digital_asset.attached?
+        DigitalAssetDemoGenerateJob.perform_async(@product.id)
+        if @product.digital_asset.content_type.start_with?('video/')
+          VideoThumbnailGenerateJob.perform_async(@product.id)
+        end
       end
       redirect_to @product, notice: 'Product was successfully created.'
     else
@@ -51,11 +54,12 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
     authorize @product
 
-    @product.digital_asset.detach if @product.digital_asset.attached?
-
     if @product.update(product_params)
-      if @product.digital_asset.attached? && @product.digital_asset.content_type.start_with?('video/')
-        VideoThumbnailGenerateJob.perform_async(@product.id)
+      if @product.digital_asset.attached?
+        DigitalAssetDemoGenerateJob.perform_async(@product.id)
+        if @product.digital_asset.content_type.start_with?('video/')
+          VideoThumbnailGenerateJob.perform_async(@product.id)
+        end
       end
       redirect_to @product, notice: 'Product was successfully updated.'
     else
@@ -71,6 +75,17 @@ class ProductsController < ApplicationController
       redirect_to products_path, notice: 'Product was successfully deleted.'
     else
       redirect_to @product, alert: 'Product could not be deleted.'
+    end
+  end
+
+  def download
+    @product = Product.find(params[:id])
+    authorize @product
+    if @product.digital_asset.attached?
+      send_data @product.digital_asset.download, filename: @product.digital_asset.filename.to_s,
+                                                 type: @product.digital_asset.content_type, disposition: 'attachment'
+    else
+      redirect_to @product, alert: 'Digital asset not found.'
     end
   end
 

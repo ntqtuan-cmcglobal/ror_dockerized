@@ -37,52 +37,65 @@
     </div>
   <% end %>
   <% @products.each do |product| %>
-  <% show_draft = (current_user&.admin? || current_user&.seller?) %>
-  <% is_draft = product.is_draft? %>
-  <% next if is_draft && current_user&.buyer? %>
-  <% if policy(product).show? %>
-    <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col <%= 'border-4 border-yellow-400' if is_draft && show_draft %>">
-      <% if is_draft && show_draft %>
-        <div class="px-4 py-2 bg-yellow-100 text-yellow-800 text-xs font-bold">
-          DRAFT PRODUCT
-        </div>
-      <% end %>
-      <% if product.digital_asset.attached? %>
-        <% if product.digital_asset.image? %>
-          <%= image_tag url_for(product.digital_asset.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
-        <% elsif product.video_thumbnail.attached? %>
-          <%= image_tag url_for(product.video_thumbnail.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
-        <% elsif product.digital_asset.audio? %>
-          <div class="flex flex-col items-center justify-center h-48 bg-gray-100">
-            <%= image_tag "/music-placeholder.png", size: "80x80", class: "mb-2" %>
+    <% show_draft = (current_user&.admin? || current_user&.seller?) %>
+    <% is_draft = product.is_draft? %>
+    <% next if is_draft && current_user&.buyer? %>
+    <% if policy(product).show? %>
+      <% is_bought = current_user&.orders&.joins(:order_items)&.where(order_items: { product_id: product.id }, status: 'paid')&.exists? %>
+      <% is_owned = is_bought || product.user_id == current_user&.id %>
+      <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col
+        <%= 'border-4 border-yellow-400' if is_draft && show_draft %>
+        <%= ' ring-4 ring-green-400' if is_owned %>">
+        <% if is_draft && show_draft %>
+          <div class="px-4 py-2 bg-yellow-100 text-yellow-800 text-xs font-bold">
+            DRAFT PRODUCT
           </div>
+        <% end %>
+        <% if is_owned %>
+          <div class="px-4 py-2 bg-green-100 text-green-800 text-xs font-bold">
+            OWNED
+          </div>
+        <% end %>
+        <% if product.digital_asset.attached? %>
+          <% if product.digital_asset.image? %>
+            <%= image_tag url_for(product.digital_asset.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+          <% elsif product.video_thumbnail.attached? %>
+            <%= image_tag url_for(product.video_thumbnail.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+          <% elsif product.digital_asset.audio? %>
+            <div class="flex flex-col items-center justify-center h-48 bg-gray-100">
+              <%= image_tag "/music-placeholder.png", size: "80x80", class: "mb-2" %>
+            </div>
+          <% else %>
+            <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
+          <% end %>
         <% else %>
           <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
         <% end %>
-      <% else %>
-        <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
-      <% end %>
-      <div class="p-4 flex-1 flex flex-col">
-        <h2 class="text-lg font-semibold mb-1"><%= product.name %></h2>
-        <p class="text-gray-600 text-sm mb-2 line-clamp-2"><%= product.description %></p>
-        <div class="flex items-center justify-between mt-auto">
-          <span class="text-blue-600 font-bold"><%= number_to_currency(product.price) %></span>
-          <span class="text-xs text-gray-500"><%= product.category ? product.category.name : "Uncategorized" %></span>
+        <div class="p-4 flex-1 flex flex-col">
+          <h2 class="text-lg font-semibold mb-1"><%= product.name %></h2>
+          <p class="text-gray-600 text-sm mb-2 line-clamp-2"><%= product.description %></p>
+          <div class="flex items-center justify-between mt-auto">
+            <span class="text-blue-600 font-bold"><%= number_to_currency(product.price) %></span>
+            <span class="text-xs text-gray-500"><%= product.category ? product.category.name : "Uncategorized" %></span>
+          </div>
+          <div class="mt-2 flex gap-2">
+            <%= link_to 'Show', product, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800 hover:bg-blue-200" if policy(product).show? %>
+            <%= link_to 'Edit', edit_product_path(product), class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800 hover:bg-yellow-200" if policy(product).edit? %>
+            <%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' }, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800 hover:bg-red-200" if policy(product).destroy? %>
+            <% if current_user&.buyer? %>
+              <% in_cart = current_user.cart.cart_items.exists?(product_id: product.id) %>
+              <% if is_owned %>
+                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-green-200 text-green-700 cursor-not-allowed">Owned</span>
+              <% else %>
+                <%= button_to 'Add to Cart', add_item_cart_path(product_id: product.id), method: :post, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded #{in_cart ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer'}", disabled: in_cart %>
+              <% end %>
+            <% end %>
+          </div>
         </div>
-        <div class="mt-2 flex gap-2">
-          <%= link_to 'Show', product, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800 hover:bg-blue-200" if policy(product).show? %>
-          <%= link_to 'Edit', edit_product_path(product), class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800 hover:bg-yellow-200" if policy(product).edit? %>
-          <%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' }, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800 hover:bg-red-200" if policy(product).destroy? %>
-          <% if current_user&.buyer? %>
-            <% in_cart = current_user.cart.cart_items.exists?(product_id: product.id) %>
-            <%= button_to 'Add to Cart', add_item_cart_path(product_id: product.id), method: :post, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded #{in_cart ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer'}", disabled: in_cart %>
-          <% end %>
+        <div class="px-4 pb-4 text-xs text-gray-400">
+          Seller: <%= product.user.full_name %>
         </div>
       </div>
-      <div class="px-4 pb-4 text-xs text-gray-400">
-        Seller: <%= product.user.full_name %>
-      </div>
-    </div>
+    <% end %>
   <% end %>
-<% end %>
 </div>

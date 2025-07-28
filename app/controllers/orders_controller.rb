@@ -46,11 +46,11 @@ class OrdersController < ApplicationController
   def cancel_order
     @order = Order.find(params[:id])
     authorize @order
-    if [OrderStatus::UNPAID, OrderStatus::PENDING].include?(@order.status)
+    if [OrderStatus::UNPAID].include?(@order.status)
       @order.update(status: OrderStatus::CANCELLED)
       redirect_to @order, notice: 'Order was successfully cancelled.'
     else
-      redirect_to @order, alert: 'Only unpaid or pending orders can be cancelled.'
+      redirect_to @order, alert: 'Only unpaid orders can be cancelled.'
     end
   end
 

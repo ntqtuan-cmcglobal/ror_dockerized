@@ -48,10 +48,11 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_options = { from: 'ror-dam@spacemail.com' }
+  # Looking to send emails in production? Check out our Email API/SMTP product!
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    user_name: 'a7a512d34d3d39',
-    password: '502d45b76a1cd5',
+    user_name: 'b7085bb16d9fbd',
+    password: 'ab2a67cf834df2',
     address: 'sandbox.smtp.mailtrap.io',
     host: 'sandbox.smtp.mailtrap.io',
     port: '2525',
