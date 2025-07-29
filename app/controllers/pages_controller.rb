@@ -4,7 +4,8 @@ class PagesController < ApplicationController
   def index
     if user_signed_in?
       # Get the most bought products based on order_items count, limit to 8
-      @products = Product.joins(:order_items)
+      @products = Product.joins(order_items: :order)
+                         .where(orders: { status: [OrderStatus::COMPLETED, OrderStatus::PAID] })
                          .group('products.id')
                          .order('COUNT(order_items.id) DESC')
                          .limit(8)
