@@ -12,18 +12,13 @@ class VideoThumbnailGenerateJob
     product = Product.find(product_id)
     return unless product.digital_asset.attached? && product.digital_asset.content_type.start_with?('video/')
 
-    # throw an error to test the error handling
-    # raise 'Simulated error for testing purposes'
-
-    product.error_message = if product.generate_video_thumbnail
-                              nil
-                            else
-                              'Failed to generate video thumbnail.'
-                            end
-
+    # clear error message before generating thumbnail
+    product.error_message = nil
     product.save
+
+    product.generate_video_thumbnail
   rescue StandardError => e
-    product.error_message = "Failed to generate video thumbnail: #{e.message}"
+    product.error_message = e.message
     product.save
   end
 end
