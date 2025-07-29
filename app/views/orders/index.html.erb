@@ -42,9 +42,12 @@
           <% end %>
         </tbody>
       </table>
-      <div class="mt-6 flex justify-end">
-        <div class="bg-blue-50 border border-blue-200 rounded-lg px-6 py-4 text-blue-800 font-semibold shadow-sm">
-          Total Outcome: $<%= number_to_currency(@orders.select { |o| o.status.in?(%w[paid completed]) }.sum(&:total_price), unit: '', precision: 2) %>
+      <div class="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="bg-blue-100 border border-blue-300 rounded-lg px-6 py-4 text-blue-900 font-semibold shadow">
+          Total Outcome: <span class="font-bold">$<%= number_to_currency(@total_outcome, unit: '', precision: 2) %></span>
+        </div>
+        <div class="w-full md:w-auto flex justify-end">
+          <%= paginate @orders, theme: 'tailwind', params: request.query_parameters %>
         </div>
       </div>
     </div>

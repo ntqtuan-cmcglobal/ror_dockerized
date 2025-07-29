@@ -4,7 +4,10 @@ class ProductPolicy < Struct.new(:user, :product)
   end
 
   def show?
-    user.present?
+    return false unless user.present?
+    return false if user.buyer? && (product.is_draft? || product.have_error?)
+
+    true
   end
 
   def new?

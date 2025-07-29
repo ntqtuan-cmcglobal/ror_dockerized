@@ -24,6 +24,10 @@ class Product < ApplicationRecord
     self.user == user
   end
 
+  def have_error?
+    error_message.present?
+  end
+
   def generate_video_thumbnail
     return unless digital_asset.attached? && digital_asset.content_type.start_with?('video/')
 

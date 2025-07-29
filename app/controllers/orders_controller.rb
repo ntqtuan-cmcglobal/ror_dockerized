@@ -39,7 +39,9 @@ class OrdersController < ApplicationController
   def index
     @orders = policy_scope(Order)
     @orders = @orders.where(user_id: current_user.id) if current_user.buyer?
-    @orders = @orders.order(created_at: :desc)
+    @orders = @orders.page(params[:page]).order(created_at: :desc)
+
+    @total_outcome = @orders.unscope(:limit, :offset).select { |o| o.status.in?(%w[paid completed]) }.sum(&:total_price)
     authorize @orders
   end
 

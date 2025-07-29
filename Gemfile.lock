@@ -150,7 +150,9 @@ GEM
       railties (>= 6.1.0)
     faker (3.5.2)
       i18n (>= 1.8.11, < 2)
+    fast_stack (0.2.0)
     ffi (1.17.2-x86_64-linux-gnu)
+    flamegraph (0.9.5)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -210,6 +212,7 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.3)
+    memory_profiler (1.1.0)
     mini_magick (5.3.0)
       logger
     mini_mime (1.1.5)
@@ -251,6 +254,8 @@ GEM
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.16)
+    rack-mini-profiler (4.0.0)
+      rack (>= 1.2.0)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -389,6 +394,7 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
+    stackprof (0.2.27)
     streamio-ffmpeg (3.0.2)
       multi_json (~> 1.8)
     stringio (3.1.7)
@@ -458,6 +464,8 @@ DEPENDENCIES
   devise (~> 4.9)
   factory_bot_rails
   faker
+  fast_stack
+  flamegraph
   image_processing
   io-console
   jbuilder (~> 2.5)
@@ -466,11 +474,13 @@ DEPENDENCIES
   kaminari
   kaminari-tailwind
   listen (>= 3.9.0)
+  memory_profiler
   mutex_m
   pg
   prettier_print (~> 1.2)
   puma (~> 6.4.3)
   pundit (~> 2.5.0)
+  rack-mini-profiler
   rails (~> 8.0.2)
   rails-controller-testing
   ransack
@@ -484,6 +494,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.0.0)
   sprockets-rails
+  stackprof
   streamio-ffmpeg
   syntax_tree (~> 6.2)
   syntax_tree-haml (~> 4.0)
