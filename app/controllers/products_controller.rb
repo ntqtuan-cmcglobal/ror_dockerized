@@ -2,7 +2,9 @@ class ProductsController < ApplicationController
   before_action :authenticate_user!, only: %i[index new create edit update destroy]
 
   def index
-    @products = Product.order(created_at: :desc)
+    @q = Product.ransack(params[:q])
+    puts @q
+    @products = @q.result.page(params[:page]).order(created_at: :desc)
     authorize @products
   end
 

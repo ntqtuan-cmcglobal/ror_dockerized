@@ -68,6 +68,10 @@ gem 'tailwindcss-rails'
 gem 'image_processing'
 gem 'streamio-ffmpeg'
 
+gem 'kaminari'
+gem 'kaminari-tailwind'
+gem 'ransack'
+
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 

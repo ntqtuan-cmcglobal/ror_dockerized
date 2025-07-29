@@ -1,4 +1,7 @@
 class Product < ApplicationRecord
+  # Pagination
+  paginates_per 12
+
   # Validations
   validates :name, presence: true, length: { maximum: 100 }
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
@@ -48,5 +51,13 @@ class Product < ApplicationRecord
   rescue StandardError => e
     Rails.logger.error "Failed to generate digital asset demo for product #{id}: #{e.message}"
     errors.add(:base, "Failed to generate digital asset demo: #{e.message}")
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[name description price is_draft category_id created_at updated_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[category user]
   end
 end

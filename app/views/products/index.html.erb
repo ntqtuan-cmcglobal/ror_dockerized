@@ -8,22 +8,22 @@
   <!-- Filters -->
   <div class="col-span-full mb-6">
     <div class="bg-white rounded-lg shadow p-6 flex flex-wrap gap-6 items-end">
-      <%= form_with url: products_path, method: :get, local: true, class: "flex flex-wrap gap-6 items-end w-full" do |f| %>
+      <%= search_form_for @q, class: "flex flex-wrap gap-6 items-end w-full" do |f| %>
         <div class="flex flex-col w-48">
-          <%= f.label :search, "🔍 Search", class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.text_field :search, value: params[:search], placeholder: "Product name...", class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
+          <%= f.label :name_cont, "🔍 Search", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.search_field :name_cont, placeholder: "Product name...", class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
         </div>
         <div class="flex flex-col w-40">
-          <%= f.label :category_id, "🗂️ Category", class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.collection_select :category_id, Category.all, :id, :name, { include_blank: "All" }, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
+          <%= f.label :category_id_eq, "🗂️ Category", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.collection_select :category_id_eq, Category.all, :id, :name, { include_blank: "All" }, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
         </div>
         <div class="flex flex-col w-32">
-          <%= f.label :min_price, "Min Price", class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.number_field :min_price, value: params[:min_price], min: 0, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
+          <%= f.label :price_gteq, "💰 Min Price", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.number_field :price_gteq, value: params.dig(:q, :price_gteq), min: 0, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
         </div>
         <div class="flex flex-col w-32">
-          <%= f.label :max_price, "Max Price", class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.number_field :max_price, value: params[:max_price], min: 0, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
+          <%= f.label :price_lteq, "💸 Max Price", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.number_field :price_lteq, value: params.dig(:q, :price_lteq), min: 0, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
         </div>
         <div>
           <%= f.submit "Filter", class: "inline-flex items-center px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition cursor-pointer" %>
@@ -36,66 +36,83 @@
       <%= link_to 'Add Product', new_product_path, class: "inline-flex items-center px-5 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition cursor-pointer" %>
     </div>
   <% end %>
-  <% @products.each do |product| %>
-    <% show_draft = (current_user&.admin? || current_user&.seller?) %>
-    <% is_draft = product.is_draft? %>
-    <% next if is_draft && current_user&.buyer? %>
-    <% if policy(product).show? %>
-      <% is_bought = current_user&.orders&.joins(:order_items)&.where(order_items: { product_id: product.id }, status: 'paid')&.exists? %>
-      <% is_owned = is_bought || product.user_id == current_user&.id %>
-      <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col
-        <%= 'border-4 border-yellow-400' if is_draft && show_draft %>
-        <%= ' ring-4 ring-green-400' if is_owned %>">
-        <% if is_draft && show_draft %>
-          <div class="px-4 py-2 bg-yellow-100 text-yellow-800 text-xs font-bold">
-            DRAFT PRODUCT
-          </div>
-        <% end %>
-        <% if is_owned %>
-          <div class="px-4 py-2 bg-green-100 text-green-800 text-xs font-bold">
-            OWNED
-          </div>
-        <% end %>
-        <% if product.digital_asset.attached? %>
-          <% if product.digital_asset.image? %>
-            <%= image_tag url_for(product.digital_asset.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
-          <% elsif product.video_thumbnail.attached? %>
-            <%= image_tag url_for(product.video_thumbnail.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
-          <% elsif product.digital_asset.audio? %>
-            <div class="flex flex-col items-center justify-center h-48 bg-gray-100">
-              <%= image_tag "/music-placeholder.png", size: "80x80", class: "mb-2" %>
+  <div class="col-span-full mb-4 flex justify-center">
+    <%= paginate @products, theme: 'tailwind' %>
+  </div>
+  <% if @products.any? %>
+    <% @products.each do |product| %>
+      <% show_draft = (current_user&.admin? || current_user&.seller?) %>
+      <% is_draft = product.is_draft? %>
+      <% next if is_draft && current_user&.buyer? %>
+      <% if policy(product).show? %>
+        <% is_bought = current_user&.orders&.joins(:order_items)&.where(order_items: { product_id: product.id }, status: 'paid')&.exists? %>
+        <% is_owned = is_bought || product.user_id == current_user&.id %>
+        <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col
+          <%= 'border-4 border-yellow-400' if is_draft && show_draft %>
+          <%= ' ring-4 ring-green-400' if is_owned %>">
+          <% if is_draft && show_draft %>
+            <div class="px-4 py-2 bg-yellow-100 text-yellow-800 text-xs font-bold">
+              DRAFT PRODUCT
             </div>
+          <% end %>
+          <% if is_owned %>
+            <div class="px-4 py-2 bg-green-100 text-green-800 text-xs font-bold">
+              OWNED
+            </div>
+          <% end %>
+          <% if product.digital_asset.attached? %>
+            <% if product.digital_asset.image? %>
+              <%= image_tag url_for(product.digital_asset.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+            <% elsif product.video_thumbnail.attached? %>
+              <%= image_tag url_for(product.video_thumbnail.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+            <% elsif product.digital_asset.audio? %>
+              <div class="flex flex-col items-center justify-center h-48 bg-gray-100">
+                <%= image_tag "/music-placeholder.png", size: "80x80", class: "mb-2" %>
+              </div>
+            <% else %>
+              <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
+            <% end %>
           <% else %>
             <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
           <% end %>
-        <% else %>
-          <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
-        <% end %>
-        <div class="p-4 flex-1 flex flex-col">
-          <h2 class="text-lg font-semibold mb-1"><%= product.name %></h2>
-          <p class="text-gray-600 text-sm mb-2 line-clamp-2"><%= product.description %></p>
-          <div class="flex items-center justify-between mt-auto">
-            <span class="text-blue-600 font-bold"><%= number_to_currency(product.price) %></span>
-            <span class="text-xs text-gray-500"><%= product.category ? product.category.name : "Uncategorized" %></span>
-          </div>
-          <div class="mt-2 flex gap-2">
-            <%= link_to 'Show', product, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800 hover:bg-blue-200" if policy(product).show? %>
-            <%= link_to 'Edit', edit_product_path(product), class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800 hover:bg-yellow-200" if policy(product).edit? %>
-            <%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' }, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800 hover:bg-red-200" if policy(product).destroy? %>
-            <% if current_user&.buyer? %>
-              <% in_cart = current_user.cart.cart_items.exists?(product_id: product.id) %>
-              <% if is_owned %>
-                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-green-200 text-green-700 cursor-not-allowed">Owned</span>
-              <% else %>
-                <%= button_to 'Add to Cart', add_item_cart_path(product_id: product.id), method: :post, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded #{in_cart ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer'}", disabled: in_cart %>
+          <div class="p-4 flex-1 flex flex-col">
+            <h2 class="text-lg font-semibold mb-1"><%= product.name %></h2>
+            <p class="text-gray-600 text-sm mb-2 line-clamp-2"><%= product.description %></p>
+            <div class="flex items-center justify-between mt-auto">
+              <span class="text-blue-600 font-bold"><%= number_to_currency(product.price) %></span>
+              <span class="text-xs text-gray-500"><%= product.category ? product.category.name : "Uncategorized" %></span>
+            </div>
+            <div class="mt-2 flex gap-2">
+              <%= link_to 'Show', product, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800 hover:bg-blue-200" if policy(product).show? %>
+              <%= link_to 'Edit', edit_product_path(product), class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800 hover:bg-yellow-200" if policy(product).edit? %>
+              <%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' }, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800 hover:bg-red-200" if policy(product).destroy? %>
+              <% if current_user&.buyer? %>
+                <% in_cart = current_user.cart.cart_items.exists?(product_id: product.id) %>
+                <% if is_owned %>
+                  <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-green-200 text-green-700 cursor-not-allowed">Owned</span>
+                <% else %>
+                  <%= button_to 'Add to Cart', add_item_cart_path(product_id: product.id), method: :post, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded #{in_cart ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer'}", disabled: in_cart %>
+                <% end %>
               <% end %>
-            <% end %>
+            </div>
+          </div>
+          <div class="px-4 pb-4 text-xs text-gray-400">
+            Seller: <%= product.user.full_name %>
           </div>
         </div>
-        <div class="px-4 pb-4 text-xs text-gray-400">
-          Seller: <%= product.user.full_name %>
-        </div>
-      </div>
+      <% end %>
     <% end %>
+  <% else %>
+    <div class="col-span-full">
+      <div class="bg-blue-50 border border-blue-200 text-blue-800 px-6 py-5 rounded-lg flex items-center justify-center shadow">
+        <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"/>
+        </svg>
+        <span class="font-medium">No products found.</span>
+      </div>
+    </div>
   <% end %>
+  <div class="col-span-full mb-4 flex justify-center">
+    <%= paginate @products, theme: 'tailwind' %>
+  </div>
 </div>
