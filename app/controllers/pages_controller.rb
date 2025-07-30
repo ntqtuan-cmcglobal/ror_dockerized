@@ -16,7 +16,23 @@ class PagesController < ApplicationController
 
   def selling_point
     # Find order items where the product belongs to the current user (seller)
-    @order_items = OrderItem.joins(:product).where(products: { user_id: current_user.id }).joins(:order).where(orders: { status: OrderStatus::PAID })
+    @order_items = OrderItem
+                   .joins(:product)
+                   .where(products: { user_id: current_user.id })
+                   .joins(:order)
+                   .where(
+                     orders: { status: [OrderStatus::PAID, OrderStatus::COMPLETED] }
+                   )
+                   .page(params[:page])
+                   .order(created_at: :desc)
+
+    @total_income = @order_items.unscope(:limit, :offset).sum do |item|
+      if item.order.status.in?(%w[paid completed])
+        item.price.to_f
+      else
+        0
+      end
+    end
   end
 
   def new; end

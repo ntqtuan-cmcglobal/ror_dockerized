@@ -1,0 +1,51 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+servers:
+  - url: http://{defaultHost}
+    variables:
+      defaultHost:
+        default: localhost:3000
+paths:
+  "/api/v1/login":
+    post:
+      summary: Create session (login)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: Login successful, returns access token
+  "/api/v1/logout":
+    delete:
+      summary: Delete session (logout)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Logout successful
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Use the /api/v1/login endpoint to get an access token.
+        Then click "Authorize" in Swagger UI and paste your token (without the 'Bearer ' prefix).
+        Example: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+security:
+  - bearerAuth: []

@@ -22,7 +22,9 @@
           <tbody>
             <% @order_items.each do |order_item| %>
               <tr class="border-t">
-                <td class="px-4 py-2"><%= order_item.product.name %></td>
+                <td class="px-4 py-2">
+                  <%= link_to order_item.product.name, product_path(order_item.product), class: "text-blue-700 hover:underline" %>
+                </td>
                 <td class="px-4 py-2 text-green-600 font-bold">$<%= order_item.price %></td>
                 <td class="px-4 py-2">
                   <% if order_item.order && order_item.order.user %>
@@ -49,10 +51,12 @@
             <% end %>
           </tbody>
         </table>
-        <div class="mt-6 flex justify-end">
-          <% total_income = @order_items.sum { |item| (['completed', 'paid'].include?(item.order&.status) && item.price) ? item.price.to_f : 0 } %>
+        <div class="mt-6 flex justify-between items-center">
+          <div>
+            <%= paginate @order_items, theme: 'tailwind' %>
+          </div>
           <div class="bg-green-50 border border-green-200 rounded-lg px-6 py-4 text-green-800 font-semibold shadow-sm">
-            Total Income: $<%= number_to_currency(total_income, unit: '', precision: 2) %>
+            Total Income: $<%= number_to_currency(@total_income, unit: '', precision: 2) %>
           </div>
         </div>
       </div>

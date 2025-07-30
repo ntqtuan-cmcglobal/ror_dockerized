@@ -1,7 +1,19 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
+  use_doorkeeper do
+    skip_controllers :applications, :authorized_applications
+  end
   mount Sidekiq::Web => '/sidekiq'
+
+  namespace :api do
+    namespace :v1 do
+      post 'login' => 'sessions#create'
+      delete 'logout' => 'sessions#destroy'
+    end
+  end
 
   devise_for :users, controllers: { registrations: 'users/registrations' }
   root to: 'pages#index'
