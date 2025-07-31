@@ -59,4 +59,12 @@ Rails.application.configure do
     authentication: :login
   }
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
+
+  # Bullet configuration
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.raise = true # raise an error if n+1 query occurs
+    Bullet.unused_eager_loading_enable = false
+  end
 end

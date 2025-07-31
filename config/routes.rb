@@ -48,6 +48,13 @@ Rails.application.routes.draw do
 
   get 'selling-point', to: 'pages#selling_point', as: 'selling_point'
 
+  namespace :administration do
+    resources :users
+    # resources :orders, only: %i[index show edit update destroy]
+    # resources :payments, only: %i[index show edit update destroy]
+    # resources :reviews, only: %i[index show edit update destroy]
+  end
+
   # resources :blogs
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

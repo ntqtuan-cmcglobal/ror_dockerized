@@ -1,0 +1,29 @@
+<%= form_with(model: [:administration, @user], local: true, class: "max-w-xl mx-auto mt-10 bg-white p-8 rounded shadow") do |form| %>
+  <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit User</h2>
+  <% if @user.errors.any? %>
+    <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+      <h3 class="font-semibold">Please fix the following errors:</h3>
+      <ul class="list-disc pl-5">
+        <% @user.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="mb-4">
+    <%= form.label :name, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.text_field :name, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+  </div>
+  <div class="mb-4">
+    <%= form.label :email, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.email_field :email, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+  </div>
+  <div class="mb-4">
+    <%= form.label :role, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.select :role, User.roles.keys.map { |r| [r.titleize, r] }, {}, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+  </div>
+  <div class="flex items-center justify-between">
+    <%= form.submit "Update User", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+    <%= link_to "Cancel", administration_users_path, class: "text-gray-600 hover:underline" %>
+  </div>
+<% end %>

@@ -3,12 +3,13 @@ class PagesController < ApplicationController
 
   def index
     if user_signed_in?
-      # Get the most bought products based on order_items count, limit to 8
+      # Get the most bought products based on order_items count, limit to 8, eager load digital_asset_attachment
       @products = Product.joins(order_items: :order)
                          .where(orders: { status: [OrderStatus::COMPLETED, OrderStatus::PAID] })
                          .group('products.id')
                          .order('COUNT(order_items.id) DESC')
                          .limit(8)
+                         .includes(:user, :category, digital_asset_attachment: :blob, video_thumbnail_attachment: :blob)
     else
       redirect_to new_user_session_path and return
     end
@@ -23,6 +24,7 @@ class PagesController < ApplicationController
                    .where(
                      orders: { status: [OrderStatus::PAID, OrderStatus::COMPLETED] }
                    )
+                   .includes(:product, order: :user)
                    .page(params[:page])
                    .order(created_at: :desc)
 

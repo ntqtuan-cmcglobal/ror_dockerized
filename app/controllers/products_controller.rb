@@ -3,8 +3,8 @@ class ProductsController < ApplicationController
 
   def index
     @q = Product.ransack(params[:q])
-    puts @q
     @products = @q.result.page(params[:page]).order(created_at: :desc)
+    @products = @products.includes(:user, :category, digital_asset_attachment: :blob, video_thumbnail_attachment: :blob)
     authorize @products
   end
 

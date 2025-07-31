@@ -98,6 +98,8 @@ group :development, :test do
 
   # This gem helps Capybara interact with the web browser.
   gem 'webdrivers', '= 5.3.0'
+
+  gem 'bullet'
 end
 
 group :development do
