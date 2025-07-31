@@ -48,6 +48,30 @@ paths:
         - Products
       security:
         - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+            description: Sort order, e.g., "created_at:desc"
+          value: "created_at:desc"
+        - name: filters
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+          description: |
+            Filters to apply, e.g., filters[category]=1&filters[name]=ProductName
+          value: '{
+            "name": "Allan",
+            "min_price": 30,
+            "max_price": 500,
+            "category_id": 3,
+            "user_id": 43
+            }'
       responses:
         "200":
           description: A list of products
