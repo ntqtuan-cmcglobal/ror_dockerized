@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       post 'login' => 'sessions#create'
       delete 'logout' => 'sessions#destroy'
+      resources :products, only: %i[index show]
+      resources :orders, only: %i[create show index]
     end
   end
 
