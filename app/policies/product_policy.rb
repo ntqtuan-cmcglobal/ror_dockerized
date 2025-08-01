@@ -1,4 +1,11 @@
-class ProductPolicy < Struct.new(:user, :product)
+class ProductPolicy
+  attr_reader :user, :product
+
+  def initialize(user, product)
+    @user = user
+    @product = product
+  end
+
   def index?
     user.present?
   end

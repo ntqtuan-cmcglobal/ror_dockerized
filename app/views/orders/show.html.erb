@@ -36,7 +36,7 @@
     <tbody>
       <%# @order.order_items.each => N+1 query so we use includes %>
       <% order_items_w_products = @order.order_items.includes(:product) %>
-      <% order_items_w_products.each do |item| %>
+      <% @order.order_items.each do |item| %>
         <tr class="border-t">
           <td class="py-2 px-4">
             <%= link_to item.product.name, product_path(item.product), class: "text-blue-600 hover:underline" %>

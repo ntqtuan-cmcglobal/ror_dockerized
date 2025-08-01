@@ -1,5 +1,10 @@
+# frozen_string_literal: true
+
+# User model handles authentication, roles, and associations with products, orders, carts, and tokens.
 class User < ApplicationRecord
-  has_secure_password
+  # Pagination
+  paginates_per 10
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -29,13 +34,11 @@ class User < ApplicationRecord
 
   def self.authenticate(params)
     user = find_for_authentication(email: params[:email])
-    return user if user&.valid_password?(params[:password])
-
-    nil
+    user if user&.valid_password?(params[:password])
   end
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[email role created_at updated_at]
+    %w[email role created_at updated_at full_name]
   end
 
   def self.ransackable_associations(_auth_object = nil)

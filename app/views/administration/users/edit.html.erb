@@ -11,16 +11,26 @@
     </div>
   <% end %>
   <div class="mb-4">
-    <%= form.label :name, class: "block text-gray-700 font-medium mb-2" %>
-    <%= form.text_field :name, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    <%= form.label :full_name, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.text_field :full_name, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
   </div>
   <div class="mb-4">
     <%= form.label :email, class: "block text-gray-700 font-medium mb-2" %>
     <%= form.email_field :email, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
   </div>
   <div class="mb-4">
+    <%= form.label :phone, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.telephone_field :phone, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+  </div>
+  <div class="mb-4">
+    <%= form.label :password, class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.password_field :password, autocomplete: "new-password", class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    <p class="text-sm text-gray-500 mt-1">Leave blank if you don't want to change the password.</p>
+  </div>
+  <div class="mb-4">
     <%= form.label :role, class: "block text-gray-700 font-medium mb-2" %>
-    <%= form.select :role, User.roles.keys.map { |r| [r.titleize, r] }, {}, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    <%= form.text_field :role, value: @user.role.titleize, disabled: true, class: "w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 cursor-not-allowed focus:outline-none" %>
+    <p class="text-sm text-gray-500 mt-1">Role cannot be changed.</p>
   </div>
   <div class="flex items-center justify-between">
     <%= form.submit "Update User", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
