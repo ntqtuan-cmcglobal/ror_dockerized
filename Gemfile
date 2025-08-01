@@ -74,6 +74,9 @@ gem 'ransack'
 
 gem 'benchmark'
 
+# Fake data
+gem 'faker'
+
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
@@ -119,9 +122,6 @@ group :test do
   # gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   # gem 'chromedriver-helper'
-  # Fake data
-  gem 'faker'
-
   gem 'simplecov', require: false
 end
 

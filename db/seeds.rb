@@ -5,3 +5,27 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+require 'faker'
+
+100.times do
+  user = User.create!(
+    name: Faker::Name.name,
+    email: Faker::Internet.unique.email,
+    password: 'password',
+    role: 'seller'
+  )
+
+  products = []
+  10_000.times do
+    products << {
+      name: Faker::Commerce.product_name,
+      description: Faker::Lorem.sentence,
+      price: Faker::Commerce.price(range: 1.0..1000.0),
+      user_id: user.id,
+      created_at: Time.now,
+      updated_at: Time.now
+    }
+  end
+  Product.insert_all(products)
+end
