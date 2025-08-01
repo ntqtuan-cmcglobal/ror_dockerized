@@ -72,6 +72,8 @@ gem 'kaminari'
 gem 'kaminari-tailwind'
 gem 'ransack'
 
+gem 'benchmark'
+
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 

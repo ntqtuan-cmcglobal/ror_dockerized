@@ -2,10 +2,14 @@ class ProductsController < ApplicationController
   before_action :authenticate_user!, only: %i[index new create edit update destroy]
 
   def index
-    @q = Product.ransack(params[:q])
-    @products = @q.result.page(params[:page]).order(created_at: :desc)
-    @products = @products.includes(:user, :category, digital_asset_attachment: :blob, video_thumbnail_attachment: :blob)
-    authorize @products
+    time = Benchmark.measure do
+      @q = Product.ransack(params[:q])
+      @products = @q.result.page(params[:page]).order(created_at: :desc)
+      @products = @products.includes(:user, :category, digital_asset_attachment: :blob,
+                                                       video_thumbnail_attachment: :blob)
+      authorize @products
+    end
+    Rails.logger.info "ProductsController#index took #{time.real} seconds"
   end
 
   def show
@@ -21,29 +25,32 @@ class ProductsController < ApplicationController
   end
 
   def create
-    @product = Product.new(product_params)
-    @product.user = current_user
-    authorize @product
+    time = Benchmark.measure do
+      @product = Product.new(product_params)
+      @product.user = current_user
+      authorize @product
 
-    if params[:product][:digital_asset].present?
-      # upload to MinIO using ActiveStorage
-      @product.digital_asset.attach(params[:product][:digital_asset])
+      if params[:product][:digital_asset].present?
+        # upload to MinIO using ActiveStorage
+        @product.digital_asset.attach(params[:product][:digital_asset])
 
-    elsif @product.digital_asset.attached?
-      @product.digital_asset.detach
-    end
-
-    if @product.save
-      if @product.digital_asset.attached?
-        DigitalAssetDemoGenerateJob.perform_async(@product.id)
-        if @product.digital_asset.content_type.start_with?('video/')
-          VideoThumbnailGenerateJob.perform_async(@product.id)
-        end
+      elsif @product.digital_asset.attached?
+        @product.digital_asset.detach
       end
-      redirect_to @product, notice: 'Product was successfully created.'
-    else
-      render :new
+
+      if @product.save
+        if @product.digital_asset.attached?
+          DigitalAssetDemoGenerateJob.perform_async(@product.id)
+          if @product.digital_asset.content_type.start_with?('video/')
+            VideoThumbnailGenerateJob.perform_async(@product.id)
+          end
+        end
+        redirect_to @product, notice: 'Product was successfully created.'
+      else
+        render :new
+      end
     end
+    Rails.logger.info "ProductsController#create took #{time.real} seconds"
   end
 
   def edit
