@@ -12,7 +12,6 @@ json.data do
   json.order_items @order.order_items do |item|
     json.id item.id
     json.product_id item.product_id
-    json.quantity item.quantity
     json.price item.price
   end
 end
