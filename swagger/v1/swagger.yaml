@@ -72,6 +72,18 @@ paths:
             "category_id": 3,
             "user_id": 43
             }'
+        - name: page
+          in: query
+          schema:
+            type: integer
+            description: Page number for pagination
+          value: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            description: Number of items per page
+          value: 10
       responses:
         "200":
           description: A list of products

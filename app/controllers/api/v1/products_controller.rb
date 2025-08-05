@@ -36,7 +36,20 @@ module Api
           products = products.order(created_at: :desc)
         end
 
+        # Pagination
+        # Using Kaminari for pagination
+        page = params[:page].to_i.positive? ? params[:page].to_i : 1
+        per_page = params[:per_page].to_i.positive? ? params[:per_page].to_i : 10
+        products = products.page(page).per(per_page)
+
         @products = products
+        @pagination = {
+          current_page: @products.current_page,
+          next_page: @products.next_page,
+          prev_page: @products.prev_page,
+          total_pages: @products.total_pages,
+          total_count: @products.total_count
+        }
         authorize @products
       end
 
