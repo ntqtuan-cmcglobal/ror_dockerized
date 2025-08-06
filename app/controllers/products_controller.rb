@@ -8,7 +8,6 @@ class ProductsController < ApplicationController
       @products = @products.includes(:user, :category, digital_asset_attachment: :blob,
                                                        video_thumbnail_attachment: :blob)
 
-      @total_count = @products.total_count
       authorize @products
     end
     Rails.logger.info "ProductsController#index took #{time.real} seconds"

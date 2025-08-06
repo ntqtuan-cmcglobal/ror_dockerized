@@ -36,7 +36,7 @@
       <%= link_to 'Add Product', new_product_path, class: "inline-flex items-center px-5 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition cursor-pointer" %>
     </div>
   <% end %>
-  <div class="col-span-full mb-4 flex justify-center">
+  <div class="col-span-full mb-4">
     <%= paginate @products, theme: 'tailwind' %>
   </div>
   <% if @products.any? %>
@@ -142,7 +142,7 @@
               </div>
             </div>
           <% end %>
-          <div class="col-span-full mb-4 flex justify-center">
+          <div class="col-span-full mb-4">
             <%= paginate @products, theme: 'tailwind' %>
           </div>
         </div>
