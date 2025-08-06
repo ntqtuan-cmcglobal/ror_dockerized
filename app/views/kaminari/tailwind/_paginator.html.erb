@@ -14,9 +14,19 @@
       <%= next_page_tag unless current_page.last? %>
     <% end %>
   </nav>
-  <form method="get" class="ml-4 flex items-center justify-center m-4" onsubmit="return this.page.value && !isNaN(this.page.value);">
-    <label for="goto-page" class="mr-2 text-sm text-gray-700">Go to page:</label>
-    <input id="goto-page" name="page" type="number" min="1" max="<%= total_pages %>" class="w-24 px-2 py-1 border rounded" value="<%= current_page.number %>">
-    <button type="submit" class="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Go</button>
-  </form>
-<% end -%>
+  <form method="get" class="flex justify-center items-center gap-4 mt-6" onsubmit="return this.page.value && !isNaN(this.page.value);">
+    <div class="flex items-center gap-2">
+      <label for="goto-page" class="text-sm text-gray-700">Go to page:</label>
+      <input id="goto-page" name="page" type="number" min="1" max="<%= total_pages %>" class="w-22 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" value="<%= current_page.number %>">
+      <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Go</button>
+    </div>
+    <div class="flex items-center gap-2">
+      <label for="per-page" class="text-sm text-gray-700">Items per page:</label>
+      <select id="per-page" name="per_page" class="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="this.form.submit()">
+        <% [12, 24, 48, 60, 72].each do |n| %>
+          <option value="<%= n %>" <%= 'selected' if params[:per_page].to_i == n %>><%= n %></option>
+          <% end %>
+        </select>
+      </div>
+    </form>
+  <% end -%>

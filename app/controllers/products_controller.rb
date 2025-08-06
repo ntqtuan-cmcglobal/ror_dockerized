@@ -4,7 +4,7 @@ class ProductsController < ApplicationController
   def index
     time = Benchmark.measure do
       @q = Product.ransack(params[:q])
-      @products = @q.result.page(params[:page]).order(created_at: :desc)
+      @products = @q.result.page(params[:page]).per(params[:per_page] || 12).order(created_at: :desc)
       @products = @products.includes(:user, :category, digital_asset_attachment: :blob,
                                                        video_thumbnail_attachment: :blob)
 
@@ -99,9 +99,40 @@ class ProductsController < ApplicationController
     end
   end
 
+  def save_review
+    @product = Product.find(params[:id])
+    @review = @product.reviews.find_or_initialize_by(user_id: current_user.id)
+    @review.assign_attributes(review_params)
+
+    # check policy
+    authorize @review
+
+    if @review.save
+      redirect_to @product, notice: 'Review was successfully saved.'
+    else
+      render :show
+    end
+  end
+
+  def delete_review
+    @product = Product.find(params[:id])
+    @review = @product.reviews.find_by(user_id: current_user.id)
+    if @review.nil?
+      redirect_to @product, alert: 'You have not reviewed this product yet.'
+    else
+      authorize @review
+      @review.destroy
+      redirect_to @product, notice: 'Review was successfully deleted.'
+    end
+  end
+
   private
 
   def product_params
     params.require(:product).permit(:name, :description, :price, :is_draft, :category_id, :digital_asset)
+  end
+
+  def review_params
+    params.require(:review).permit(:product_id, :user_id, :rating, :comment)
   end
 end

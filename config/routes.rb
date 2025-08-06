@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   resources :products do
     member do
       get 'download', to: 'products#download'
+      post 'save_review', to: 'products#save_review'
+      delete 'delete_review', to: 'products#delete_review'
     end
   end
   resources :categories
