@@ -2,4 +2,8 @@ build:
   docker:
     web: Dockerfile
 run:
-  web: bundle exec rails server -p ${PORT:-3000} -b 0.0.0.0
+  web: bundle exec puma -C config/puma.rb
+release:
+  command:
+    - bundle exec rake db:migrate
+  image: web
