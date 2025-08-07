@@ -92,12 +92,22 @@
                   <% end %>
                   <% if product.digital_asset.attached? %>
                     <% if product.digital_asset.image? %>
-                      <%= image_tag url_for(product.digital_asset.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
-                    <% elsif product.video_thumbnail.attached? %>
-                      <%= image_tag url_for(product.video_thumbnail.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+                      <% if product.digital_asset.variant(resize_to_limit: [300, 300]) %>
+                        <%= image_tag url_for(product.digital_asset.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+                      <% else %>
+                        <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>
+                      <% end %>
+                    <% elsif product.digital_asset.video? %>
+                      <% if product.video_thumbnail && product.video_thumbnail.variant(resize_to_limit: [300, 300]) %>
+                        <%= image_tag url_for(product.video_thumbnail.variant(resize_to_limit: [300, 300]).processed), class: "object-cover w-full h-48" %>
+                      <% else %>
+                        <div class="flex items-center justify-center w-full h-48 bg-gray-200">
+                          <%= image_tag "/no-products-found.png", class: "object-contain w-full h-full" %>
+                        </div>
+                      <% end %>
                     <% elsif product.digital_asset.audio? %>
-                      <div class="flex flex-col items-center justify-center h-48 bg-gray-100">
-                        <%= image_tag "/music-placeholder.png", size: "80x80", class: "mb-2" %>
+                      <div class="flex items-center justify-center h-48 bg-gray-200">
+                        <%= image_tag "/music-placeholder.png", class: "object-cover w-full h-full" %>
                       </div>
                     <% else %>
                       <%= image_tag "/no-products-found.png", size: "300x300", class: "object-cover w-full h-48" %>

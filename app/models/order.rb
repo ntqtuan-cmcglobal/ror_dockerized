@@ -18,4 +18,28 @@ class Order < ApplicationRecord
   validates :total_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   attribute :status, :string, default: 'unpaid'
+
+  # Ransack
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id user_id status total_price created_at updated_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[user order_items payments]
+  end
+
+  # Scopes
+  scope :recent, -> { order(created_at: :desc) }
+  scope :unpaid, -> { where(status: 'unpaid') }
+  scope :paid, -> { where(status: 'paid') }
+  scope :completed, -> { where(status: 'completed') }
+
+  # Instance methods
+  def total_items
+    order_items.sum(:quantity)
+  end
+
+  def total_price_with_currency
+    "$#{total_price}"
+  end
 end

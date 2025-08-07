@@ -52,7 +52,7 @@ Rails.application.routes.draw do
 
   namespace :administration do
     resources :users
-    # resources :orders, only: %i[index show edit update destroy]
+    resources :orders
     # resources :payments, only: %i[index show edit update destroy]
     # resources :reviews, only: %i[index show edit update destroy]
   end
