@@ -15,7 +15,8 @@ module Testapp
     # Sidekiq configuration
     config.active_job.queue_adapter = :sidekiq
 
-    config.cache_store = :redis_cache_store, { url: 'redis://redis:6379/0', expires_in: 90.minutes }
+    config.cache_store = :redis_cache_store,
+                         { url: ENV.fetch('REDISCLOUD_URL', 'redis://redis:6379/0'), expires_in: 90.minutes }
 
     config.rack_mini_profiler_environments = %w[development test]
 
