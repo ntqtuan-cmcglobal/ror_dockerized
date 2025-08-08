@@ -15,6 +15,10 @@ RUN bundle install
 
 COPY . .
 
+
+# Build Tailwind CSS
 RUN npm install tailwindcss
+RUN npm run build:css
+
 
 CMD ["rails", "server", "-b", "0.0.0.0", "-p", ${PORT}]
