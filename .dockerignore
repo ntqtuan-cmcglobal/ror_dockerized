@@ -3,3 +3,24 @@ tmp/*
 .git
 node_modules
 vendor/bundle
+# Ignore test and spec directories
+spec/
+test/
+# Ignore coverage reports
+coverage/
+public/coverage/
+# Ignore local storage
+storage/
+# Ignore build artifacts
+public/assets/
+app/assets/builds/
+# Ignore editor/project files
+.vscode/
+.idea/
+*.swp
+*.bak
+# Ignore environment and docker files
+.env
+docker-compose.yml
+# Ignore Sorbet files
+sorbet/
