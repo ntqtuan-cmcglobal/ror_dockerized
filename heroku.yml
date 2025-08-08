@@ -1,9 +1,11 @@
 build:
   docker:
     web: Dockerfile
+
 run:
   web: bundle exec puma -C config/puma.rb
+
 release:
   command:
-    - rails db:migrate
+    - bundle exec rails db:migrate
   image: web
