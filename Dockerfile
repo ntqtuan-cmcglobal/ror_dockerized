@@ -17,4 +17,4 @@ COPY . .
 
 RUN npm install tailwindcss
 
-CMD ["rails", "server", "-b", "0.0.0.0", "-p", "${PORT}"]
+CMD ["rails", "server", "-b", "0.0.0.0", "-p", ${PORT}]
