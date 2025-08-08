@@ -22,5 +22,6 @@ app/assets/builds/
 # Ignore environment and docker files
 .env
 docker-compose.yml
+config/master.key
 # Ignore Sorbet files
 sorbet/
