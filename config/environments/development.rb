@@ -77,4 +77,7 @@ Rails.application.configure do
     Bullet.raise = false
     Bullet.unused_eager_loading_enable = false
   end
+
+  # Hosts (allow all - must be changed if use production env)
+  config.hosts.clear
 end
