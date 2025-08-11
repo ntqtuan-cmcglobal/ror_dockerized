@@ -27,7 +27,7 @@ COPY . .
 RUN npm run build:css
 
 # Precompile Rails assets
-# RUN bundle exec rails assets:precompile
+RUN bundle exec rails assets:precompile
 # Expose port and start server
 ENV PORT=3000
 CMD bundle exec rails server -b 0.0.0.0 -p $PORT
