@@ -3,6 +3,7 @@
 # Controller for managing users in the administration namespace.
 module Administration
   class UsersController < ApplicationController
+    before_action :authenticate_user!
     # GET /administration/users
     def index
       @q = User.ransack(params[:q])

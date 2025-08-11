@@ -1,4 +1,6 @@
 class ReviewsController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     @order_items = OrderItem.page(params[:page])
     # This will work because @order_items is paginated

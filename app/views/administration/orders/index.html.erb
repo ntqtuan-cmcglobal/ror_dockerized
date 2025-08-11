@@ -13,7 +13,20 @@
         </div>
         <div>
           <%= f.label :status_eq, "Status", class: "block text-sm font-medium text-gray-700" %>
-          <%= f.select :status_eq, options_for_select([['All Statuses', ''], ['Pending', 'pending'], ['Paid', 'paid'], ['Shipped', 'shipped'], ['Cancelled', 'cancelled']], params.dig(:q, :status_eq)), {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+          <%= f.select :status_eq,
+            options_for_select(
+              [
+                ['All', ''],
+                ['Unpaid', 'unpaid'],
+                ['Paid', 'paid'],
+                ['Completed', 'completed'],
+                ['Cancelled', 'cancel']
+              ],
+              params.dig(:q, :status_eq)
+            ),
+            { include_blank: false },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          %>
         </div>
         <div>
           <%= f.label :created_at_gteq, "From Date", class: "block text-sm font-medium text-gray-700" %>

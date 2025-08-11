@@ -1,4 +1,6 @@
 class OrdersController < ApplicationController
+  before_action :authenticate_user!
+
   def create
     @cart = if params[:cart_id].present?
               Cart.find(params[:cart_id])

@@ -1,5 +1,6 @@
 module Administration
   class OrdersController < ApplicationController
+    before_action :authenticate_user!
     def index
       @q = Order.ransack(params[:q])
       @orders = @q.result.page(params[:page]).order(created_at: :desc)
@@ -11,6 +12,7 @@ module Administration
     end
 
     def new
+      @buyers = User.where(role: 'buyer')
       @order = Order.new
     end
 
