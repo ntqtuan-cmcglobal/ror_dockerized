@@ -69,7 +69,7 @@ module Administration
 
     def build_order_from_params
       total_price = Product.where(id: params[:order][:product_ids]).sum(:price)
-      order = Order.build(user_id: params[:order][:user_id], status: 'pending', total_price: total_price)
+      order = Order.build(user_id: params[:order][:user_id], status: 'unpaid', total_price: total_price)
       order.order_items.build(order_items_attributes(params[:order][:product_ids]))
       order
     end
