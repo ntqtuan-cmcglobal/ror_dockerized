@@ -1,0 +1,24 @@
+<h1 class="text-3xl font-bold mb-6 text-blue-600">Edit Order</h1>
+<%= form_with(model: @order, url: administration_order_path(@order), local: true, method: :patch) do |form| %>
+  <div class="mb-4">
+    <%= form.label :user_id, "Buyer", class: "block text-gray-700 font-semibold mb-2" %>
+    <%= form.select :user_id, Array(@buyers).collect { |b| ["#{b.full_name}(#{b.email})", b.id] }, { prompt: "Select Buyer" }, class: "single-select2 block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
+  </div>
+  <div class="mb-4">
+    <%= label_tag 'order_product_ids', 'Products', class: 'block text-gray-700 font-semibold mb-2' %>
+    <%= select_tag 'order[product_ids][]',
+            options_from_collection_for_select(Product.all, :id, :name, @order.order_items.map(&:product_id)),
+            multiple: true,
+            id: 'order_product_ids',
+            class: 'multiple-select2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm'
+        %>
+  </div>
+  <div class="mb-4">
+    <%= form.label :status, "Status", class: "block text-gray-700 font-semibold mb-2" %>
+    <%= form.select :status, [OrderStatus::UNPAID, OrderStatus::PAID, OrderStatus::CANCELLED, OrderStatus::COMPLETED].map { |s| [s.titleize, s] }, { prompt: "Select Status" }, class: "single-select2 block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
+  </div>
+  <div class="flex gap-2">
+    <%= form.submit "Update Order", class: "px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition" %>
+    <%= link_to 'Back to Orders', administration_orders_path, class: 'btn btn-secondary inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded' %>
+  </div>
+<% end %>
