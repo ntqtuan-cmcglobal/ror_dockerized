@@ -35,12 +35,53 @@ class PaymentsController < ApplicationController
 
     @payment.result = PaymentResult::SUCCESS if @payment.payment_method == 'bank_transfer'
 
+    if @payment.payment_method == 'stripe'
+      stripe_customer = Stripe::Customer.create({
+                                                  email: params[:stripeEmail],
+                                                  source: params[:stripeToken]
+                                                })
+
+      stripe_line_items = @payment.order.order_items.map do |item|
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.product.name,
+              images: [url_for(item.product.digital_asset) || url_for(item.product.video_thumbnail)]
+            },
+            unit_amount: item.product.price.to_i
+          },
+          quantity: 1
+        }
+      end
+
+      session = Stripe::Checkout::Session.create(
+        customer: stripe_customer.id,
+        line_items: stripe_line_items,
+        mode: 'payment',
+        success_url: order_payments_url(@payment.order),
+        cancel_url: order_payments_url(@payment.order)
+      )
+      redirect_to session.url
+      return
+    end
+
     if @payment.save
       # Update order status to paid
       @order = Order.find(@payment.order_id)
       @order.update(status: OrderStatus::PAID) if @order.status == OrderStatus::UNPAID
       # Optionally, you can redirect to the order page or payment confirmation
-      redirect_to @order, notice: 'Payment was successfully created and order status updated.'
+      # redirect_to @order, notice: 'Payment was successfully created and order status updated.'
+    else
+      render :new
+    end
+
+    if @payment.save
+      # Update order status to paid
+      @order = Order.find(@payment.order_id)
+      @order.update(status: OrderStatus::PAID) if @order.status == OrderStatus::UNPAID
+      # Optionally, you can redirect to the order page or payment confirmation
+      # redirect_to @order, notice: 'Payment was successfully created and order status updated.'
     else
       render :new
     end

@@ -1,4 +1,4 @@
-for eventName in ["DOMContentLoaded", "turbolinks:load"]
+for eventName in ["DOMContentLoaded"]
     document.addEventListener eventName, ->
         stars = document.querySelectorAll '#star-rating .star-label'
         stars.forEach (star) ->

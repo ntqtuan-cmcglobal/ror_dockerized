@@ -1,7 +1,7 @@
 module PaymentMethod
   PAYMENT_METHODS = {
     credit_card: 'Credit Card',
-    paypal: 'PayPal',
+    stripe: 'Stripe',
     bank_transfer: 'Bank Transfer',
     cash: 'Cash'
   }.freeze

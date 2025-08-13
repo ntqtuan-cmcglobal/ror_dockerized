@@ -7,7 +7,7 @@ ruby '3.4.4'
 gem 'pg'
 gem 'puma', '~> 6.4.3'
 gem 'rails', '~> 8.0.2'
-gem 'sprockets-rails'
+gem 'sprockets-rails', require: 'sprockets/railtie'
 
 # Asset management
 gem 'bootsnap', require: false
@@ -15,10 +15,9 @@ gem 'bootstrap-sass', '~> 3.4.1'
 gem 'coffee-rails', '~> 4.2'
 gem 'cssbundling-rails'
 gem 'image_processing'
-gem 'jquery-rails', '~> 4.6.0'
-gem 'jsbundling-rails'
-gem 'sass-rails', '~> 5.0' # Uncomment if needed
-gem 'tailwindcss-rails'
+gem 'importmap-rails'
+gem 'jquery-rails'
+gem 'select2-rails'
 gem 'terser'
 gem 'uglifier', '>= 1.3.0'
 
@@ -41,13 +40,12 @@ gem 'rack-mini-profiler', require: false
 gem 'stackprof'
 
 # Performance
-gem 'turbolinks'
+# gem 'turbolinks'
 
 # Data & API
 gem 'aws-sdk-s3'
 gem 'jbuilder', '~> 2.5'
 gem 'kaminari'
-gem 'kaminari-tailwind'
 gem 'ransack'
 gem 'redis', '~> 4.0'
 gem 'rswag'
@@ -90,6 +88,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'dotenv-rails'
   gem 'letter_opener'
   gem 'listen', '>= 3.9.0'
   gem 'spring'
