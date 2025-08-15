@@ -1,6 +1,6 @@
 class Review < ApplicationRecord
   # Pagination
-  paginates_per 5
+  paginates_per 10
 
   # Associations
   belongs_to :product

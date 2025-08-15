@@ -2,6 +2,9 @@ class Payment < ApplicationRecord
   # Custom fields
   attr_accessor :stripe_checkout_url
 
+  # Pagination
+  paginates_per 10
+
   # Associations
   belongs_to :order, optional: true
 

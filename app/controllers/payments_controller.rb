@@ -3,7 +3,9 @@ class PaymentsController < ApplicationController
   before_action :set_payment, only: %i[show edit update destroy]
 
   def index
-    @payments = Payment.where(order_id: params[:order_id]).recent
+    @payments = Payment.where(order_id: params[:order_id])
+                       .page(params[:page])
+                       .recent
     @payments.each do |payment|
       if payment.stripe_session_id && payment.order.status == OrderStatus::UNPAID
         payment.stripe_checkout_url = Stripe::Checkout::Session.retrieve(payment.stripe_session_id).url

@@ -1,6 +1,6 @@
 class Order < ApplicationRecord
   # Pagination
-  paginates_per 5
+  paginates_per 10
 
   # Validations
   validates :user_id, presence: true
