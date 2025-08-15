@@ -1,0 +1,67 @@
+<h1 class="text-3xl font-bold text-blue-600 mb-6">Payments</h1>
+<!-- Filters Form using Ransack -->
+<div class="mb-6">
+  <%= search_form_for @q, url: administration_payments_path, method: :get, html: { class: "flex flex-wrap gap-4 items-end" } do |f| %>
+    <div>
+      <%= f.label :order_user_full_name_cont, "User", class: "block text-sm font-bold text-blue-700 mb-1" %>
+      <%= f.text_field :order_user_full_name_cont, class: "mt-1 block w-52 border-2 border-blue-400 focus:border-blue-600 rounded-md shadow-lg px-3 py-2 bg-blue-50 text-blue-900" %>
+    </div>
+    <div>
+      <%= f.label :result_eq, "Result", class: "block text-sm font-bold text-blue-700 mb-1" %>
+      <%= f.select :result_eq, PaymentResult.options_for_select, { include_blank: "All" }, class: "mt-1 block w-52 border-2 border-blue-400 focus:border-blue-600 rounded-md shadow-lg px-3 py-2 bg-blue-50 text-blue-900" %>
+    </div>
+    <div>
+      <%= f.label :payment_method_eq, "Payment Method", class: "block text-sm font-bold text-blue-700 mb-1" %>
+      <%= f.select :payment_method_eq, PaymentMethod.options_for_select, { include_blank: "All" }, class: "mt-1 block w-52 border-2 border-blue-400 focus:border-blue-600 rounded-md shadow-lg px-3 py-2 bg-blue-50 text-blue-900" %>
+    </div>
+    <div>
+      <%= f.label :created_at_gteq, "Created From", class: "block text-sm font-bold text-blue-700 mb-1" %>
+      <%= f.date_field :created_at_gteq, class: "mt-1 block w-52 border-2 border-blue-400 focus:border-blue-600 rounded-md shadow-lg px-3 py-2 bg-blue-50 text-blue-900" %>
+    </div>
+    <div>
+      <%= f.label :created_at_lteq, "Created To", class: "block text-sm font-bold text-blue-700 mb-1" %>
+      <%= f.date_field :created_at_lteq, class: "mt-1 block w-52 border-2 border-blue-400 focus:border-blue-600 rounded-md shadow-lg px-3 py-2 bg-blue-50 text-blue-900" %>
+    </div>
+    <div>
+      <%= f.submit "Filter", class: "bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow-lg font-bold cursor-pointer" %>
+      <%= link_to "Reset", administration_payments_path, class: "ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-6 rounded shadow-lg font-bold text-center" %>
+    </div>
+  <% end %>
+</div>
+<table class="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="px-4 py-2 border-b text-left font-medium">ID</th>
+      <th class="px-4 py-2 border-b text-left font-medium">User</th>
+      <th class="px-4 py-2 border-b text-left font-medium">Amount</th>
+      <th class="px-4 py-2 border-b text-left font-medium">Result</th>
+      <th class="px-4 py-2 border-b text-left font-medium">Payment Method</th>
+      <th class="px-4 py-2 border-b text-left font-medium">Stripe Session ID</th>
+      <th class="px-4 py-2 border-b text-left font-medium">Created At</th>
+      <th class="px-4 py-2 border-b"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @payments.each do |payment| %>
+      <tr class="border-t">
+        <td class="px-4 py-2 border-b"><%= payment.id %></td>
+        <td class="px-4 py-2 border-b"><%= payment.order&.user&.full_name %></td>
+        <td class="px-4 py-2 border-b"><%= number_to_currency(payment.order&.total_price) %></td>
+        <td class="px-4 py-2 border-b" style="background-color: <%= PaymentResult.color_for(payment.result) %>; color: white;"><%= payment.result %></td>
+        <td class="px-4 py-2 border-b"><%= PaymentMethod.method_name(payment.payment_method) %></td>
+        <td class="px-4 py-2 border-b truncate max-w-xs" title="<%= payment.stripe_session_id %>"><%= payment.stripe_session_id %></td>
+        <td class="px-4 py-2 border-b"><%= payment.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+        <td class="px-4 py-2 border-b">
+          <%= link_to 'Show', order_payments_path(payment.order), class: 'bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-sm cursor-pointer' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="8" class="px-4 py-2 text-center">
+        <%= paginate @payments, theme: 'tailwind' %>
+      </td>
+    </tr>
+  </tfoot>
+</table>

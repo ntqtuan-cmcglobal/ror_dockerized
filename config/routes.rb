@@ -55,8 +55,8 @@ Rails.application.routes.draw do
   namespace :administration do
     resources :users
     resources :orders
-    # resources :payments, only: %i[index show edit update destroy]
-    resources :reviews
+    resources :payments, only: %i[index]
+    resources :reviews, only: %i[index destroy]
   end
 
   # resources :blogs

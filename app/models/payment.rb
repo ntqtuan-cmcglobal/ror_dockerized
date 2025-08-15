@@ -3,7 +3,6 @@ class Payment < ApplicationRecord
   attr_accessor :stripe_checkout_url
 
   # Associations
-  belongs_to :user, optional: true
   belongs_to :order, optional: true
 
   # Validations
@@ -37,4 +36,17 @@ class Payment < ApplicationRecord
 
   # Scopes
   scope :recent, -> { order(created_at: :desc) }
+
+  # Ransack configuration
+  def order_user_full_name
+    order&.user&.full_name
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[result payment_method created_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[order user]
+  end
 end
