@@ -27,7 +27,6 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 # return unless Rails.env.test?
 require 'rspec/rails'
 require 'sidekiq/testing'
-require 'sidekiq/logging'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -80,11 +79,6 @@ RSpec.configure do |config|
   # https://rspec.info/features/8-0/rspec-rails
   #
   # You can also this infer these behaviours automatically by location, e.g.
-
-  # silence sidekiq logging in tests
-  config.before(:suite) do
-    Sidekiq::Logging.logger = Logger.new('/dev/null')
-  end
 end
 # OPTIONAL
 # This outputs the report to your public folder
