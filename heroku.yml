@@ -2,10 +2,6 @@ build:
   docker:
     web: Dockerfile
 
-run:
-  web: bundle exec puma -C config/puma.rb
-  sidekiq: bundle exec sidekiq #run sidekiq
-
 release:
   command:
     - bundle exec rails db:migrate

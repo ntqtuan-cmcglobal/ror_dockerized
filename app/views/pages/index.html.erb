@@ -37,7 +37,13 @@
                 <% elsif product.digital_asset.video? %>
                   <% video_thumb = product.video_thumbnail %>
                   <% video_variant = video_thumb&.variant(resize_to_limit: [400, 280]) rescue nil %>
-                  <%= image_tag url_for(video_variant ? video_variant.processed : video_thumb), class: "object-cover w-full h-56 group-hover:scale-110 transition-transform duration-300" %>
+                  <% if video_thumb.present? %>
+                    <%= image_tag url_for(video_variant ? video_variant.processed : video_thumb), class: "object-cover w-full h-56 group-hover:scale-110 transition-transform duration-300" %>
+                  <% else %>
+                    <div class="flex items-center justify-center h-56 bg-gray-200">
+                      <%= image_tag "/no-products-found.png", class: "object-cover w-full h-full" %>
+                    </div>
+                  <% end %>
                   <div class="absolute inset-0 flex items-center justify-center">
                     <div class="bg-black bg-opacity-50 rounded-full p-3">
                       <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
