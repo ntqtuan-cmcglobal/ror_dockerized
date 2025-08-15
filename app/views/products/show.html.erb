@@ -115,11 +115,11 @@
           <%= flash[:review_error] %>
         </div>
       <% end %>
-      <% if @product.reviews.empty? %>
+      <% if @reviews.empty? %>
         <div class="text-gray-500 italic">No reviews yet.</div>
       <% else %>
-        <% @product.reviews.order(created_at: :desc).each do |review| %>
-          <div class="border-b border-gray-100 pb-3">
+        <% @reviews.each do |review| %>
+          <div id="review-<%= review.id %>" class="border-b border-gray-100 pb-3 <%= params[:highlight_review].to_i == review.id ? 'border-4 border-blue-500 rounded-xl bg-blue-100 shadow-lg ring-2 ring-blue-400' : '' %>">
             <div class="flex items-center mb-1">
               <span class="font-semibold text-gray-700"><%= review.user == current_user ? "You" : review.user.full_name %></span>
               <div class="ml-2 flex items-center gap-1">
@@ -137,6 +137,9 @@
           </div>
         <% end %>
       <% end %>
+      <div class="mt-4">
+        <%= paginate @reviews, theme: 'tailwind', params: { highlight_review: params[:highlight_review] } %>
+      </div>
     </div>
     <div class="px-8 py-5 border-t border-gray-100 bg-gray-50">
       <h3 class="text-lg font-semibold text-gray-700 mb-2">
@@ -147,38 +150,44 @@
         <% end %>
       </h3>
       <% if user_signed_in? %>
-        <% review_form = @review || @product.reviews.find_by(user_id: current_user.id) || @product.reviews.build %>
-        <%= form_with(model: review_form, url: save_review_product_path(@product), local: true, method: :post) do |f| %>
-          <% if review_form.errors.any? %>
-            <div class="mb-4 px-4 py-2 rounded bg-red-100 text-red-700 font-semibold">
-              <ul class="list-disc pl-5">
-                <% review_form.errors.full_messages.each do |msg| %>
-                  <li><%= msg %></li>
+        <% if policy(@reviews).create? %>
+          <% review_form = @review || @product.reviews.find_by(user_id: current_user.id) || @product.reviews.build %>
+          <%= form_with(model: review_form, url: save_review_product_path(@product), local: true, method: :post) do |f| %>
+            <% if review_form.errors.any? %>
+              <div class="mb-4 px-4 py-2 rounded bg-red-100 text-red-700 font-semibold">
+                <ul class="list-disc pl-5">
+                  <% review_form.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+            <div class="mb-3">
+              <label class="block font-semibold text-gray-700 mb-2">Rating <span class="text-red-500">*</span></label>
+              <div class="flex items-center gap-2" id="star-rating">
+                <% 1.upto(5) do |star| %>
+                  <%= f.radio_button :rating, star, id: "review_rating_#{star}", class: "hidden" %>
+                  <label for="review_rating_<%= star %>" class="cursor-pointer star-label" data-star="<%= star %>">
+                    <svg class="w-7 h-7 <%= review_form.rating.to_i >= star ? 'text-yellow-400' : 'text-gray-300' %>" fill="<%= review_form.rating.to_i >= star ? '#FBBF24' : 'none' %>" stroke="currentColor" viewBox="0 0 24 24">
+                      <polygon stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="12 17.27 18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21 12 17.27"/>
+                    </svg>
+                  </label>
                 <% end %>
-              </ul>
+              </div>
             </div>
-          <% end %>
-          <div class="mb-3">
-            <label class="block font-semibold text-gray-700 mb-2">Rating <span class="text-red-500">*</span></label>
-            <div class="flex items-center gap-2" id="star-rating">
-              <% 1.upto(5) do |star| %>
-                <%= f.radio_button :rating, star, id: "review_rating_#{star}", class: "hidden" %>
-                <label for="review_rating_<%= star %>" class="cursor-pointer star-label" data-star="<%= star %>">
-                  <svg class="w-7 h-7 <%= review_form.rating.to_i >= star ? 'text-yellow-400' : 'text-gray-300' %>" fill="<%= review_form.rating.to_i >= star ? '#FBBF24' : 'none' %>" stroke="currentColor" viewBox="0 0 24 24">
-                    <polygon stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="12 17.27 18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21 12 17.27"/>
-                  </svg>
-                </label>
+            <div class="mb-3">
+              <%= f.text_area :comment, rows: 3, class: "w-full rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-gray-50 p-3 text-gray-900 placeholder-gray-400 transition", placeholder: "Write your review...", required: true %>
+            </div>
+            <div class="flex gap-4">
+              <%= f.submit review_form.persisted? ? "Update Review" : "Submit Review", class: "px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition cursor-pointer" %>
+              <% if review_form.persisted? %>
+                <%= link_to 'Delete Review', delete_review_product_path(@product), method: :delete, data: { confirm: 'Are you sure you want to delete your review?' }, class: "px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600 transition cursor-pointer" %>
               <% end %>
             </div>
-          </div>
-          <div class="mb-3">
-            <%= f.text_area :comment, rows: 3, class: "w-full rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-gray-50 p-3 text-gray-900 placeholder-gray-400 transition", placeholder: "Write your review...", required: true %>
-          </div>
-          <div class="flex gap-4">
-            <%= f.submit review_form.persisted? ? "Update Review" : "Submit Review", class: "px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition cursor-pointer" %>
-            <% if review_form.persisted? %>
-              <%= link_to 'Delete Review', delete_review_product_path(@product), method: :delete, data: { confirm: 'Are you sure you want to delete your review?' }, class: "px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600 transition cursor-pointer" %>
-            <% end %>
+          <% end %>
+        <% else %>
+          <div class="text-gray-500 italic">
+            Only buyers can leave reviews.
           </div>
         <% end %>
       <% else %>

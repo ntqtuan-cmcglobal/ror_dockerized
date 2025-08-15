@@ -15,11 +15,11 @@ class ReviewPolicy
   end
 
   def create?
-    user.present?
+    user.present? && user.buyer?
   end
 
   def update?
-    user.present? && (review.user_id == user.id || user.admin?)
+    user.present? && user.buyer? && (review.user_id == user.id)
   end
 
   def destroy?

@@ -14,7 +14,20 @@ class ProductsController < ApplicationController
   end
 
   def show
-    @product = Product.find(params[:id])
+    @product = Product.includes(
+      :user,
+      :category,
+      :reviews,
+      digital_asset_attachment: :blob,
+      video_thumbnail_attachment: :blob
+    ).find(params[:id])
+
+    @reviews = @product
+               .reviews
+               .order(created_at: :desc)
+               .page(params[:page])
+               .per(params[:per_page])
+
     authorize @product
   end
 
@@ -101,6 +114,7 @@ class ProductsController < ApplicationController
 
   def save_review
     @product = Product.find(params[:id])
+    pp current_user
     @review = @product.reviews.find_or_initialize_by(user_id: current_user.id)
     @review.assign_attributes(review_params)
 

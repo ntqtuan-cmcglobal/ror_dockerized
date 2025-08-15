@@ -23,8 +23,11 @@
     <div class="flex items-center gap-2">
       <label for="per-page" class="text-sm text-gray-700">Items per page:</label>
       <select id="per-page" name="per_page" class="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="this.form.submit()">
-        <% [12, 24, 48, 60, 72].each do |n| %>
-          <option value="<%= n %>" <%= 'selected' if params[:per_page].to_i == n %>><%= n %></option>
+        <% per_page_options = [10, 20, 50, 100] %>
+        <% current_per_page = params[:per_page].to_i > 0 ? params[:per_page].to_i : per_page %>
+        <% per_page_options.push current_per_page unless per_page_options.include?(current_per_page) %>
+        <% per_page_options.uniq.sort.each do |n| %>
+          <option value="<%= n %>" <%= 'selected' if current_per_page == n %>><%= n %></option>
           <% end %>
         </select>
       </div>

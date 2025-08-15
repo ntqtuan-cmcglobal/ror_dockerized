@@ -46,6 +46,8 @@ Rails.application.routes.draw do
     collection do
       get 'new/:order_id', to: 'payments#new', as: 'new_with_order'
     end
+
+    get 'check_stripe_payment/:payment_id', to: 'payments#check_stripe_payment', as: 'check_stripe_payment'
   end
 
   get 'selling-point', to: 'pages#selling_point', as: 'selling_point'
@@ -54,7 +56,7 @@ Rails.application.routes.draw do
     resources :users
     resources :orders
     # resources :payments, only: %i[index show edit update destroy]
-    # resources :reviews, only: %i[index show edit update destroy]
+    resources :reviews
   end
 
   # resources :blogs

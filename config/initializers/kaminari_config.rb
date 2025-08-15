@@ -12,3 +12,14 @@ Kaminari.configure do |config|
   # config.max_pages = nil
   # config.params_on_first_page = false
 end
+
+module Kaminari
+  module Helpers
+    class Paginator
+      def render(&block)
+        instance_eval(&block) if @options[:total_pages] >= 1
+        @output_buffer
+      end
+    end
+  end
+end

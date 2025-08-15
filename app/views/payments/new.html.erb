@@ -16,7 +16,7 @@
           <span class="text-gray-900">Bank Transfer</span>
         </label>
         <label class="flex items-center">
-          <%= form.radio_button :payment_method, 'stripe', class: "mr-2 accent-gray-400" %>
+          <%= form.radio_button :payment_method, 'stripe', class: "mr-2 accent-blue-600" %>
           <span>Stripe</span>
         </label>
         <label class="flex items-center text-gray-400 cursor-not-allowed">
@@ -30,26 +30,3 @@
     </div>
   <% end %>
 </div>
-<% if @payment&.payment_method == 'stripe' %>
-  <script src="https://js.stripe.com/v3/"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      var stripe = Stripe("<%= Rails.configuration.stripe[:publishable_key] %>");
-      var checkoutButton = document.getElementById("checkout-button");
-
-      if (checkoutButton) {
-        checkoutButton.addEventListener("click", function () {
-          fetch("/create-checkout-session", {
-            method: "POST",
-          }).then(function (result) {
-            if (result.error) {
-              alert(result.error.message);
-            } else {
-              return stripe.redirectToCheckout({ sessionId: session.id });
-            }
-          });
-        });
-      }
-    });
-  </script>
-<% end %>

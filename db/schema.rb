@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_30_032939) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_15_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -156,6 +156,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_30_032939) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.string "payment_method", null: false
+    t.string "stripe_session_id"
     t.index ["order_id"], name: "index_payments_on_order_id"
     t.index ["payment_method"], name: "index_payments_on_payment_method"
   end

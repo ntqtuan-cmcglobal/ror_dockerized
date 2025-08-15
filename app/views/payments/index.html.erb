@@ -1,32 +1,44 @@
 <% if params[:order_id].present? %>
   <h1 class="text-2xl font-bold mb-6">Payments for Order #<%= params[:order_id] %></h1>
   <% if @payments.any? %>
-    <table class="min-w-full bg-white border border-gray-200 rounded shadow">
-      <thead>
-        <tr>
-          <th class="px-4 py-2 border-b text-left bg-gray-50">ID</th>
-          <th class="px-4 py-2 border-b text-left bg-gray-50">Order</th>
-          <th class="px-4 py-2 border-b text-left bg-gray-50">Result</th>
-          <th class="px-4 py-2 border-b text-left bg-gray-50">Payment Method</th>
-          <th class="px-4 py-2 border-b text-left bg-gray-50">Created At</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @payments.each do |payment| %>
-          <tr class="hover:bg-gray-100">
-            <td class="px-4 py-2 border-b"><%= payment.id %></td>
-            <td class="px-4 py-2 border-b"><%= payment.order_id %></td>
-            <td class="px-4 py-2 border-b" style="background-color: <%= PaymentResult.color_for(payment.result) %>; color: white;">
-              <%= payment.result %>
-            </td>
-            <td class="px-4 py-2 border-b">
-              <%= PaymentMethod.method_name(payment.payment_method) %>
-            </td>
-            <td class="px-4 py-2 border-b"><%= payment.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+        <thead>
+          <tr>
+            <th class="px-6 py-3 border-b text-left bg-gray-50 font-semibold">ID</th>
+            <th class="px-6 py-3 border-b text-left bg-gray-50 font-semibold">Order</th>
+            <th class="px-6 py-3 border-b text-left bg-gray-50 font-semibold">Result</th>
+            <th class="px-6 py-3 border-b text-left bg-gray-50 font-semibold">Payment Method</th>
+            <th class="px-6 py-3 border-b text-left bg-gray-50 font-semibold">Created At</th>
+            <th class="px-6 py-3 border-b text-left bg-gray-50 font-semibold">Stripe Checkout URL</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @payments.each do |payment| %>
+            <tr class="hover:bg-gray-100 transition">
+              <td class="px-6 py-4 border-b"><%= payment.id %></td>
+              <td class="px-6 py-4 border-b"><%= payment.order_id %></td>
+              <td class="px-6 py-4 border-b" style="background-color: <%= PaymentResult.color_for(payment.result) %>; color: white;">
+                <%= payment.result %>
+              </td>
+              <td class="px-6 py-4 border-b">
+                <%= PaymentMethod.method_name(payment.payment_method) %>
+              </td>
+              <td class="px-6 py-4 border-b"><%= payment.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+              <td class="px-6 py-4 border-b">
+                <% if payment.stripe_checkout_url.present? %>
+                  <a href="<%= payment.stripe_checkout_url %>" target="_blank" class="text-blue-600 hover:underline break-all">
+                    Stripe Checkout
+                  </a>
+                <% else %>
+                  <span class="text-gray-400">N/A</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% else %>
     <p class="text-gray-500 mt-4">No payments found for this order.</p>
   <% end %>

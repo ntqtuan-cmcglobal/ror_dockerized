@@ -3,7 +3,12 @@ class PaymentsController < ApplicationController
   before_action :set_payment, only: %i[show edit update destroy]
 
   def index
-    @payments = Payment.where(order_id: params[:order_id])
+    @payments = Payment.where(order_id: params[:order_id]).recent
+    @payments.each do |payment|
+      if payment.stripe_session_id && payment.order.status == OrderStatus::UNPAID
+        payment.stripe_checkout_url = Stripe::Checkout::Session.retrieve(payment.stripe_session_id).url
+      end
+    end
   end
 
   def show
@@ -33,58 +38,45 @@ class PaymentsController < ApplicationController
   def create
     @payment = Payment.new(payment_params)
 
-    @payment.result = PaymentResult::SUCCESS if @payment.payment_method == 'bank_transfer'
+    if @payment.save
+      ActiveRecord::Base.transaction do
+        if @payment.payment_method == 'stripe'
+          stripe_line_items = @payment.order.order_items.map do |item|
+            {
+              price_data: {
+                currency: 'usd',
+                product_data: {
+                  name: item.product.name,
+                  images: [url_for(item.product.digital_asset) || url_for(item.product.video_thumbnail)]
+                },
+                unit_amount: item.product.price.to_i * 100
+              },
+              quantity: 1
+            }
+          end
 
-    if @payment.payment_method == 'stripe'
-      stripe_customer = Stripe::Customer.create({
-                                                  email: params[:stripeEmail],
-                                                  source: params[:stripeToken]
-                                                })
+          session = Stripe::Checkout::Session.create(
+            line_items: stripe_line_items,
+            mode: 'payment',
+            customer_email: current_user.email,
+            success_url: payment_check_stripe_payment_url(@payment.id),
+            cancel_url: payment_check_stripe_payment_url(@payment.id)
+          )
 
-      stripe_line_items = @payment.order.order_items.map do |item|
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: item.product.name,
-              images: [url_for(item.product.digital_asset) || url_for(item.product.video_thumbnail)]
-            },
-            unit_amount: item.product.price.to_i
-          },
-          quantity: 1
-        }
+          @payment.update!(stripe_session_id: session.id)
+        elsif @payment.payment_method == 'bank_transfer'
+          @payment.update!(result: PaymentResult::SUCCESS)
+        end
       end
 
-      session = Stripe::Checkout::Session.create(
-        customer: stripe_customer.id,
-        line_items: stripe_line_items,
-        mode: 'payment',
-        success_url: order_payments_url(@payment.order),
-        cancel_url: order_payments_url(@payment.order)
-      )
-      redirect_to session.url
-      return
-    end
-
-    if @payment.save
-      # Update order status to paid
-      @order = Order.find(@payment.order_id)
-      @order.update(status: OrderStatus::PAID) if @order.status == OrderStatus::UNPAID
-      # Optionally, you can redirect to the order page or payment confirmation
-      # redirect_to @order, notice: 'Payment was successfully created and order status updated.'
+      redirect_to order_payments_url(@payment.order), notice: 'Payment created.'
     else
       render :new
     end
-
-    if @payment.save
-      # Update order status to paid
-      @order = Order.find(@payment.order_id)
-      @order.update(status: OrderStatus::PAID) if @order.status == OrderStatus::UNPAID
-      # Optionally, you can redirect to the order page or payment confirmation
-      # redirect_to @order, notice: 'Payment was successfully created and order status updated.'
-    else
-      render :new
-    end
+  rescue Stripe::CardError => e
+    flash[:error] = e.message
+    @payment.update(result: PaymentResult::ERROR)
+    redirect_to order_payments_url(@payment.order)
   end
 
   def edit; end
@@ -100,6 +92,25 @@ class PaymentsController < ApplicationController
   def destroy
     @payment.destroy
     redirect_to payments_url, notice: 'Payment was successfully destroyed.'
+  end
+
+  def check_stripe_payment
+    @payment = Payment.find(params[:payment_id])
+    if @payment.payment_method == 'stripe'
+      session = Stripe::Checkout::Session.retrieve(@payment.stripe_session_id)
+      if session.payment_status == 'paid'
+        @payment.update(result: PaymentResult::SUCCESS)
+        redirect_to order_payments_url(@payment.order), notice: 'Payment was successful.'
+      else
+        redirect_to order_payments_url(@payment.order), alert: 'Payment not completed.'
+      end
+    else
+      redirect_to order_payments_url(@payment.order), alert: 'Payment method is not Stripe.'
+    end
+  rescue Stripe::CardError => e
+    flash[:error] = e.message
+    @payment.update(result: PaymentResult::ERROR)
+    redirect_to order_payments_url(@payment.order)
   end
 
   private
