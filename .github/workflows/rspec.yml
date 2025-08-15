@@ -44,9 +44,9 @@ jobs:
       - name: Install dependencies
         run: |
           bundle install
-      - name: Build tailwindcss
+      - name: Assets precompile
         run: |
-          bundle exec rails tailwindcss:build
+          bundle exec rails assets:precompile
       - name: Run tests
         run: |
           bundle exec rspec
