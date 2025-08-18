@@ -14,6 +14,7 @@ gem 'bootsnap', require: false
 gem 'bootstrap-sass', '~> 3.4.1'
 gem 'coffee-rails', '~> 4.2'
 gem 'cssbundling-rails'
+gem 'csv'
 gem 'image_processing'
 gem 'importmap-rails'
 gem 'jquery-rails'

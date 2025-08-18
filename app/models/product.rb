@@ -2,6 +2,9 @@ class Product < ApplicationRecord
   # Pagination
   paginates_per 12
 
+  # CSV Attributes
+  CSV_ATTRIBUTES = %w[id name description price category_name].freeze
+
   # Validations
   validates :name, presence: true, length: { maximum: 100 }
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }

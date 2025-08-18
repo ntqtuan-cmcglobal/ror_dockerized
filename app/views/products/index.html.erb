@@ -35,8 +35,9 @@
     </div>
   </div>
   <% if current_user&.admin? || current_user&.seller? %>
-    <div class="col-span-full mb-4 flex justify-start">
+    <div class="col-span-full mb-4 flex items-center justify-start gap-4">
       <%= link_to 'Add Product', new_product_path, class: "inline-flex items-center px-5 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition cursor-pointer" %>
+      <%= link_to 'Bulk Import', bulk_import_products_path, class: "inline-flex items-center px-5 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow hover:bg-purple-700 transition cursor-pointer" %>
     </div>
   <% end %>
   <% if @products.any? %>

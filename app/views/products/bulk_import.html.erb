@@ -1,0 +1,94 @@
+<div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded shadow">
+  <h1 class="text-2xl font-bold mb-6 text-blue-600">Bulk Import Products</h1>
+  <%= form_with url: bulk_import_products_path, local: true, html: { multipart: true, class: "space-y-6" } do |form| %>
+    <div>
+      <label class="block text-sm font-medium text-blue-600 mb-2" for="file">
+        Upload CSV File <span class="text-red-600">*</span>
+      </label>
+      <%= form.file_field :import_file, accept: ".csv", required: true, class: "block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      <p class="text-xs text-gray-500 mt-1">Only CSV files are allowed.</p>
+    </div>
+    <div>
+      <%= form.submit "Import", class: "inline-block px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition cursor-pointer" %>
+    </div>
+  <% end %>
+  <div class="mt-8 text-gray-600 text-sm">
+    <p class="mb-2">
+      Please upload a CSV file with the following columns:
+      <ul class="list-disc list-inside font-semibold ml-4">
+        <li>id (skip if creating new)</li>
+        <li>name</li>
+        <li>description</li>
+        <li>price</li>
+        <li>category_name</li>
+      </ul>
+      <span class="text-gray-500">
+        (must follow names in 
+        <a href="<%= categories_path %>" class="text-blue-600 hover:underline" target="_blank" rel="noopener">Categories</a> list. 
+        If not exist, it will be defined as <span class="font-semibold">'Uncategorized'</span>)
+      </span>.
+    </p>
+    <p class="mt-2">
+      <a href="<%= sample_csv_products_path(format: :csv) %>" class="text-blue-600 hover:underline">Download sample CSV</a>
+    </p>
+    <p class="mt-4 text-yellow-700 bg-yellow-100 border-l-4 border-yellow-400 p-3 rounded">
+      <strong>Caution:</strong> All imported products will be created in <span class="font-semibold">draft</span> state. You will need to publish them manually after import.
+    </p>
+  </div>
+  <div class="mt-10">
+    <h2 class="text-xl font-bold mb-4 text-blue-600">Imported Files</h2>
+    <table class="min-w-full bg-white border border-gray-200 rounded">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-700">#</th>
+          <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-700">File</th>
+          <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-700">Imported At</th>
+          <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-700">Status</th>
+          <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-700">Imported By</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @import_files.present? %>
+          <% @import_files.each_with_index do |import_file, idx| %>
+            <tr class="<%= idx.even? ? 'bg-gray-50' : '' %>">
+              <td class="px-4 py-2 border-b text-sm text-gray-600"><%= idx + 1 %></td>
+              <td class="px-4 py-2 border-b text-sm text-gray-600">
+                <a href="<%= url_for(import_file.import_file) %>" class="text-blue-600 hover:underline flex items-center gap-2" target="_blank" rel="noopener">
+                  <span class="inline-block bg-blue-100 text-blue-600 rounded-full p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+                    </svg>
+                  </span>
+                  <span><%= import_file.import_file.filename %></span>
+                </a>
+              </td>
+              <td class="px-4 py-2 border-b text-sm text-gray-600"><%= import_file.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+              <td class="px-4 py-2 border-b text-sm text-gray-600">
+                <% case import_file.status %>
+                <% when 'success' %>
+                  <span class="text-green-600 font-semibold">Success</span>
+                <% when 'error' %>
+                  <span class="text-red-600 font-semibold">Error</span>
+                  <% if import_file.error_message.present? %>
+                    <div class="mt-1 text-xs text-red-500 bg-red-50 border border-red-200 rounded p-2">
+                      <strong>Error:</strong> <%= import_file.error_message %>
+                    </div>
+                  <% end %>
+                <% when 'processing' %>
+                  <span class="text-yellow-600 font-semibold">Processing</span>
+                <% else %>
+                  <span class="text-gray-600 font-semibold"><%= import_file.status.capitalize %></span>
+                <% end %>
+              </td>
+              <td class="px-4 py-2 border-b text-sm text-gray-600"><%= import_file.user.try(:email) || 'N/A' %></td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="px-4 py-6 text-center text-gray-500">No imported files found.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

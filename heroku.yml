@@ -5,5 +5,4 @@ build:
 release:
   command:
     - bundle exec rails db:migrate
-    - bundle exec sidekiq
   image: web

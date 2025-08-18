@@ -25,6 +25,12 @@ Rails.application.routes.draw do
       post 'save_review', to: 'products#save_review'
       delete 'delete_review', to: 'products#delete_review'
     end
+
+    collection do
+      get 'bulk_import', to: 'products#bulk_import', as: 'bulk_import'
+      post 'bulk_import', to: 'products#bulk_import_action', as: 'bulk_import_action'
+      get 'sample_csv', to: 'products#sample_csv', as: 'sample_csv'
+    end
   end
   resources :categories
   resources :uploads, only: %i[index new create]

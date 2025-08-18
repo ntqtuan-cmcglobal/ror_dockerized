@@ -140,6 +140,48 @@ class ProductsController < ApplicationController
     end
   end
 
+  def sample_csv
+    @products = Product
+                .select('products.*, categories.name AS category_name')
+                .joins(:category)
+                .order('RANDOM()')
+                .limit(3)
+
+    csv = CsvService.new
+
+    respond_to do |format|
+      format.csv { send_data csv.export(@products, Product::CSV_ATTRIBUTES), filename: "products-#{Date.today}.csv" }
+      # any else format throw error
+      format.any { head :not_acceptable }
+    end
+  end
+
+  def bulk_import
+    @import_files = ImportFile.where(user: current_user)
+    authorize @import_files
+  end
+
+  def bulk_import_action
+    if params[:import_file].present?
+      begin
+        import_file_record = ImportFile.create(
+          user: current_user,
+          import_file: params[:import_file],
+          status: 'processing'
+        )
+
+        ImportCsvFileProductsJob.perform_async(import_file_record.id, current_user.id)
+
+        redirect_to bulk_import_products_path, notice: 'Import products is in processing.'
+      rescue StandardError => e
+        Rails.logger.error "Failed to import products: #{e.message}"
+        redirect_to bulk_import_products_path, alert: "Failed to import products: #{e.message}"
+      end
+    else
+      redirect_to bulk_import_products_path, alert: 'Please upload a valid CSV file.'
+    end
+  end
+
   private
 
   def product_params

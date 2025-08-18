@@ -10,6 +10,7 @@
   - mailers
   - video_thumbnail_generation
   - digital_asset_demo_generate
+  - import_csv_file_products
 
 :scheduler:
   :schedule:
