@@ -72,7 +72,7 @@
         <% if user_signed_in? %>
           <li>
             <%= link_to '/users/edit', class: "text-gray-600 px-3 py-2 hover:text-blue-600 transition-colors duration-200", title: "Profile" do %>
-              Hello, <%= current_user.full_name %> (<%= current_user.role.capitalize %>)
+              Hello, <%=h current_user.full_name %> (<%=h current_user.role.capitalize %>)
             <% end %>
           </li>
           <li>

@@ -12,7 +12,7 @@
       </div>
       <div>
         <%= f.label :role_eq, "Role", class: "block text-sm font-bold text-blue-700 mb-1" %>
-        <%= f.select :role_eq, options_for_select([['All Roles', ''], ['Admin', 'admin'], ['Seller', 'seller'], ['Buyer', 'buyer']], params.dig(:q, :role_eq)), {}, { class: "mt-1 block w-52 border-2 border-blue-400 focus:border-blue-600 rounded-md shadow-lg px-3 py-2 bg-blue-50 text-blue-900" } %>
+        <%= f.select :role_eq, options_for_select([['All Roles', ''], ['Admin', 'admin'], ['Seller', 'seller'], ['Buyer', 'buyer']], h(params.dig(:q, :role_eq))), {}, { class: "mt-1 block w-52 border-2 border-blue-400 focus:border-blue-600 rounded-md shadow-lg px-3 py-2 bg-blue-50 text-blue-900" } %>
       </div>
       <div>
         <%= f.submit "Filter", class: "bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow-lg font-bold cursor-pointer" %>
@@ -46,10 +46,10 @@
         <tbody>
           <% @users.each do |user| %>
             <tr class="hover:bg-gray-50">
-              <td class="px-4 py-2 border-b"><%= user.id %></td>
-              <td class="px-4 py-2 border-b"><%= user.full_name %></td>
-              <td class="px-4 py-2 border-b"><%= user.email %></td>
-              <td class="px-4 py-2 border-b"><%= user.role %></td>
+              <td class="px-4 py-2 border-b"><%= h(user.id) %></td>
+              <td class="px-4 py-2 border-b"><%= h(user.full_name) %></td>
+              <td class="px-4 py-2 border-b"><%= h(user.email) %></td>
+              <td class="px-4 py-2 border-b"><%= h(user.role) %></td>
               <td class="px-4 py-2 border-b">
                 <div class="flex space-x-1">
                   <%= link_to "Show", administration_user_path(user), class: "w-12 px-1 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs truncate text-center" %>

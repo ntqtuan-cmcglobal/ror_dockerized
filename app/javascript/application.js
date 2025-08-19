@@ -10,5 +10,4 @@ import "select2-rails";
 
 document.addEventListener("DOMContentLoaded", function () {
   $(".select2").select2();
-  alert("1232131233");
 });

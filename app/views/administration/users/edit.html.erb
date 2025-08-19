@@ -28,8 +28,8 @@
     <p class="text-sm text-gray-500 mt-1">Leave blank if you don't want to change the password.</p>
   </div>
   <div class="mb-4">
-    <%= form.label :role, class: "block text-gray-700 font-medium mb-2" %>
-    <%= form.text_field :role, value: @user.role.titleize, disabled: true, class: "w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 cursor-not-allowed focus:outline-none" %>
+    <label for="user_role" class="block text-gray-700 font-medium mb-2">Role</label>
+    <input id="user_role" type="text" value="<%= @user.role.titleize %>" disabled class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 cursor-not-allowed focus:outline-none" />
     <p class="text-sm text-gray-500 mt-1">Role cannot be changed.</p>
   </div>
   <div class="flex items-center justify-between">

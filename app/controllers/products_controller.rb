@@ -171,7 +171,7 @@ class ProductsController < ApplicationController
 
   def filtered_products(products)
     products = products.where(is_draft: false) if current_user.buyer?
-    products = products.page(params[:page]).per(params[:per_page] || 12).order(created_at: :desc)
+    products = products.page(params[:page]).per(params[:per_page]).order(created_at: :desc)
     products.includes(:user, :category, digital_asset_attachment: :blob,
                                         video_thumbnail_attachment: :blob)
   end
