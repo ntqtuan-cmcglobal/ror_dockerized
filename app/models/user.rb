@@ -20,6 +20,9 @@ class User < ApplicationRecord
   # Active Storage
   has_one_attached :avatar
 
+  # Encrypted Attributes
+  attr_encrypted :phone, key: ENV['ENCRYPTION_KEY']
+
   def admin?
     role == 'admin'
   end

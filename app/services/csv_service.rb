@@ -46,8 +46,15 @@ class CsvService
     row_to_h = process_product_row(row_to_h, current_user) if model_class.name == 'Product'
 
     record = model_class.find_by(id: row_to_h['id']) || model_class.new
-    pp 'row_to_h:'
-    pp row_to_h
+
+    if record.new_record?
+      # assign current user id
+      row_to_h['user_id'] = current_user&.id
+    elsif record.user_id && record.user_id != current_user&.id
+      # not allow to update other user's products
+      raise "Cannot update record with id #{row_to_h['id']} as it belongs to another user."
+    end
+
     record.assign_attributes(row_to_h)
     log_import_result(record, model_class)
   end
@@ -56,7 +63,7 @@ class CsvService
     category = Category.find_by(name: row_to_h['category_name'])
     row_to_h['category_id'] = category&.id || nil
     row_to_h.delete('category_name')
-    row_to_h['user_id'] = current_user&.id
+    # row_to_h['user_id'] = current_user&.id
     row_to_h['is_draft'] = true
     row_to_h
   end

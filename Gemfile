@@ -43,6 +43,9 @@ gem 'stackprof'
 # Performance
 # gem 'turbolinks'
 
+# Security
+gem 'attr_encrypted'
+
 # Data & API
 gem 'aws-sdk-s3'
 gem 'jbuilder', '~> 2.5'

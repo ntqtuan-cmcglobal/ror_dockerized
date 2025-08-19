@@ -34,6 +34,7 @@ class ProductsController < ApplicationController
   def new
     @product = Product.new
     @categories = Category.all
+    @sellers = User.where(role: 'seller').order(:email)
 
     authorize @product
   end
@@ -70,6 +71,8 @@ class ProductsController < ApplicationController
   def edit
     @product = Product.find(params[:id])
     @categories = Category.all
+    @sellers = User.where(role: 'seller').order(:email)
+
     authorize @product
   end
 
@@ -157,7 +160,10 @@ class ProductsController < ApplicationController
   end
 
   def bulk_import
-    @import_files = ImportFile.where(user: current_user)
+    @import_files = ImportFile.visible_to(current_user)
+                              .order(created_at: :desc)
+                              .page(params[:page])
+
     authorize @import_files
   end
 
@@ -185,7 +191,9 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-    params.require(:product).permit(:name, :description, :price, :is_draft, :category_id, :digital_asset)
+    permitted = %i[name description price is_draft category_id digital_asset]
+    permitted << :user_id if current_user.admin?
+    params.require(:product).permit(permitted)
   end
 
   def review_params
