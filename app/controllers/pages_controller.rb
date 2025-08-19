@@ -4,9 +4,14 @@ class PagesController < ApplicationController
   def index
     if user_signed_in?
       # Get the most bought products based on order_items count, limit to 8, eager load digital_asset_attachment
-      @products = Product.order('products.average_rating DESC')
-                         .limit(8)
-                         .includes(:user, :category, digital_asset_attachment: :blob, video_thumbnail_attachment: :blob)
+      @products = if current_user.buyer?
+                    Product.where(is_draft: false)
+                  else
+                    Product.all
+                  end
+                  .order('products.average_rating DESC')
+                  .limit(8)
+                  .includes(:user, :category, digital_asset_attachment: :blob, video_thumbnail_attachment: :blob)
     else
       redirect_to new_user_session_path and return
     end

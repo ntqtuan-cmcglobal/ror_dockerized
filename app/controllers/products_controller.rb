@@ -4,10 +4,7 @@ class ProductsController < ApplicationController
   def index
     time = Benchmark.measure do
       @q = Product.ransack(params[:q])
-      @products = @q.result.page(params[:page]).per(params[:per_page] || 12).order(created_at: :desc)
-      @products = @products.includes(:user, :category, digital_asset_attachment: :blob,
-                                                       video_thumbnail_attachment: :blob)
-
+      @products = filtered_products(@q.result)
       authorize @products
     end
     Rails.logger.info "ProductsController#index took #{time.real} seconds"
@@ -15,11 +12,7 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.includes(
-      :user,
-      :category,
-      :reviews,
-      digital_asset_attachment: :blob,
-      video_thumbnail_attachment: :blob
+      :user, :category, :reviews, digital_asset_attachment: :blob, video_thumbnail_attachment: :blob
     ).find(params[:id])
 
     @reviews = @product
@@ -41,29 +34,7 @@ class ProductsController < ApplicationController
 
   def create
     time = Benchmark.measure do
-      @product = Product.new(product_params)
-      @product.user = current_user
-      authorize @product
-
-      if params[:product][:digital_asset].present?
-        # upload to MinIO using ActiveStorage
-        @product.digital_asset.attach(params[:product][:digital_asset])
-
-      elsif @product.digital_asset.attached?
-        @product.digital_asset.detach
-      end
-
-      if @product.save
-        if @product.digital_asset.attached?
-          DigitalAssetDemoGenerateJob.perform_async(@product.id)
-          if @product.digital_asset.content_type.start_with?('video/')
-            VideoThumbnailGenerateJob.perform_async(@product.id)
-          end
-        end
-        redirect_to @product, notice: 'Product was successfully created.'
-      else
-        render :new
-      end
+      handle_create_product
     end
     Rails.logger.info "ProductsController#create took #{time.real} seconds"
   end
@@ -77,19 +48,17 @@ class ProductsController < ApplicationController
   end
 
   def update
-    @product = Product.find(params[:id])
-    authorize @product
+    set_product_and_authorize
+
+    if invalid_digital_asset_type?
+      set_form_variables
+      render :edit and return
+    end
 
     if @product.update(product_params)
-      if @product.digital_asset.attached?
-        DigitalAssetDemoGenerateJob.perform_async(@product.id)
-        if @product.digital_asset.content_type.start_with?('video/')
-          VideoThumbnailGenerateJob.perform_async(@product.id)
-        end
-      end
-      redirect_to @product, notice: 'Product was successfully updated.'
+      handle_update_success
     else
-      render :edit
+      handle_update_failure
     end
   end
 
@@ -198,5 +167,100 @@ class ProductsController < ApplicationController
 
   def review_params
     params.require(:review).permit(:product_id, :user_id, :rating, :comment)
+  end
+
+  def filtered_products(products)
+    products = products.where(is_draft: false) if current_user.buyer?
+    products = products.page(params[:page]).per(params[:per_page] || 12).order(created_at: :desc)
+    products.includes(:user, :category, digital_asset_attachment: :blob,
+                                        video_thumbnail_attachment: :blob)
+  end
+
+  def allowed_digital_asset_types
+    ['video/', 'image/', 'audio/']
+  end
+
+  def invalid_digital_asset_type?
+    return false unless params[:product][:digital_asset].present?
+
+    content_type = params[:product][:digital_asset].content_type
+    if allowed_digital_asset_types.any? { |type| content_type.start_with?(type) }
+      false
+    else
+      flash.now[:alert] = 'Digital asset must be a video, image, or audio file.'
+      true
+    end
+  end
+
+  def set_new_form_variables
+    @product = Product.new(product_params)
+    @categories = Category.all
+    @sellers = User.where(role: 'seller').order(:email)
+  end
+
+  def build_product_with_user
+    @product = Product.new(product_params)
+    @product.user = current_user
+  end
+
+  def handle_digital_asset_attachment
+    return unless params[:product][:digital_asset].present?
+
+    @product.digital_asset.detach if @product.digital_asset.attached?
+    @product.digital_asset.attach(params[:product][:digital_asset])
+  end
+
+  def process_digital_asset_jobs
+    return unless @product.digital_asset.attached?
+
+    DigitalAssetDemoGenerateJob.perform_async(@product.id)
+    return unless @product.digital_asset.content_type.start_with?('video/')
+
+    VideoThumbnailGenerateJob.perform_async(@product.id)
+  end
+
+  def handle_create_product
+    render_new_with_form_variables and return if invalid_digital_asset_type?
+
+    build_and_authorize_product
+    handle_digital_asset_attachment
+
+    if @product.save
+      process_digital_asset_jobs
+      redirect_to @product, notice: 'Product was successfully created.'
+    else
+      render :new
+    end
+  end
+
+  def render_new_with_form_variables
+    set_new_form_variables
+    render :new
+  end
+
+  def build_and_authorize_product
+    build_product_with_user
+    authorize @product
+  end
+
+  def set_product_and_authorize
+    @product = Product.find(params[:id])
+    authorize @product
+  end
+
+  def set_form_variables
+    @categories = Category.all
+    @sellers = User.where(role: 'seller').order(:email)
+  end
+
+  def handle_update_success
+    handle_digital_asset_attachment
+    process_digital_asset_jobs
+    redirect_to @product, notice: 'Product was successfully updated.'
+  end
+
+  def handle_update_failure
+    set_form_variables
+    render :edit
   end
 end
