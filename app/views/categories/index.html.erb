@@ -11,6 +11,7 @@
         <thead>
           <tr class="bg-gray-100">
             <th class="py-3 px-6 text-left font-semibold text-gray-700">Name</th>
+            <th class="py-3 px-6 text-left font-semibold text-gray-700">Total Products</th>
             <th class="py-3 px-6 text-right font-semibold text-gray-700">Actions</th>
           </tr>
         </thead>
@@ -18,6 +19,7 @@
           <% @categories.each do |category| %>
             <tr class="border-t border-gray-200 hover:bg-gray-50">
               <td class="py-3 px-6"><%= category.name %></td>
+              <td class="py-3 px-6"><%= category.total_products %></td>
               <td class="py-3 px-6 text-right space-x-2">
                 <% if policy(category).show? %>
                   <%= link_to 'Show', category_path(category), class: 'inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium py-1 px-3 rounded text-sm' %>
@@ -34,6 +36,7 @@
         </tbody>
       </table>
     </div>
+    <%= paginate @categories, theme: 'tailwind' %>
   <% else %>
     <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded shadow mt-4">
       No categories found.

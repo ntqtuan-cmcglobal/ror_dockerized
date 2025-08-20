@@ -12,6 +12,7 @@
               <th class="px-6 py-3 border-b text-left font-semibold text-gray-700">Payment Method</th>
               <th class="px-6 py-3 border-b text-left font-semibold text-gray-700">Created At</th>
               <th class="px-6 py-3 border-b text-left font-semibold text-gray-700">Stripe Checkout URL</th>
+              <th class="px-6 py-3 border-b text-left font-semibold text-gray-700">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -35,30 +36,38 @@
                     <span class="text-gray-400">N/A</span>
                   <% end %>
                 </td>
+                <td class="px-6 py-4 border-b">
+                  <% if policy(payment).mark_as_paid? %>
+                    <%= button_to 'Mark as Paid', mark_as_paid_payments_path(payment), method: :post, class: 'bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors cursor-pointer' %>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="6" class="px-6 py-4">
+                  <%= paginate @payments, theme: 'tailwind' %>
+                </td>
               </tr>
-            <% end %>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="6" class="px-6 py-4">
-                <%= paginate @payments, theme: 'tailwind' %>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-      <div class="mt-6 flex justify-start">
-        <%= link_to 'Back to Order Detail', order_path(params[:order_id]), class: 'inline-block px-5 py-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold transition-colors duration-150' %>
-      </div>
-    <% else %>
-      <p class="text-gray-500 mt-8 text-center">No payments found for this order.</p>
-      <div class="mt-6 flex justify-start">
-        <%= link_to 'Back to Order Detail', order_path(params[:order_id]), class: 'inline-block px-5 py-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold transition-colors duration-150' %>
-      </div>
-    <% end %>
-  </div>
-<% else %>
-  <div class="max-w-xl mx-auto px-4 py-8">
-    <p class="text-red-600 font-semibold text-center">Order ID parameter is required.</p>
-  </div>
-<% end %>
+            </tfoot>
+          </table>
+        </div>
+        <% if policy(Order).show? %>
+          <div class="mt-6 flex justify-start">
+            <%= link_to 'Back to Order Detail', order_path(params[:order_id]), class: 'inline-block px-5 py-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold transition-colors duration-150' %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-gray-500 mt-8 text-center">No payments found for this order.</p>
+        <% if policy(Order).show? %>
+          <div class="mt-6 flex justify-start">
+            <%= link_to 'Back to Order Detail', order_path(params[:order_id]), class: 'inline-block px-5 py-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold transition-colors duration-150' %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="max-w-xl mx-auto px-4 py-8">
+      <p class="text-red-600 font-semibold text-center">Order ID parameter is required.</p>
+    </div>
+  <% end %>

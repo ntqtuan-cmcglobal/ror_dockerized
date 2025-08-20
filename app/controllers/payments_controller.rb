@@ -67,7 +67,7 @@ class PaymentsController < ApplicationController
 
           @payment.update!(stripe_session_id: session.id)
         elsif @payment.payment_method == 'bank_transfer'
-          @payment.update!(result: PaymentResult::SUCCESS)
+          @payment.update!(result: PaymentResult::PENDING)
         end
       end
 
@@ -84,6 +84,7 @@ class PaymentsController < ApplicationController
   def edit; end
 
   def update
+    authorize @payment
     if @payment.update(payment_params)
       redirect_to @payment, notice: 'Payment was successfully updated.'
     else
@@ -91,9 +92,28 @@ class PaymentsController < ApplicationController
     end
   end
 
-  def destroy
-    @payment.destroy
-    redirect_to payments_url, notice: 'Payment was successfully destroyed.'
+  def destroy; end
+
+  def mark_as_paid
+    @payment = Payment.find(params[:id])
+    authorize @payment
+    if @payment.payment_method == 'bank_transfer'
+      @payment.update(result: PaymentResult::SUCCESS)
+      redirect_to order_payments_url(@payment.order), notice: 'Payment was marked as paid.'
+    else
+      redirect_to order_payments_url(@payment.order),
+                  alert: 'Only bank transfer payments can be marked as paid manually.'
+    end
+  end
+
+  private
+
+  def set_payment
+    @payment = Payment.find(params[:id])
+  end
+
+  def payment_params
+    params.require(:payment).permit(:order_id, :result, :payment_method)
   end
 
   def check_stripe_payment
@@ -113,15 +133,5 @@ class PaymentsController < ApplicationController
     flash[:error] = e.message
     @payment.update(result: PaymentResult::ERROR)
     redirect_to order_payments_url(@payment.order)
-  end
-
-  private
-
-  def set_payment
-    @payment = Payment.find(params[:id])
-  end
-
-  def payment_params
-    params.require(:payment).permit(:order_id, :result, :payment_method)
   end
 end

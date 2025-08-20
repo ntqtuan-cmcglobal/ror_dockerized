@@ -24,7 +24,7 @@ class PagesController < ApplicationController
                    .where(products: { user_id: current_user.id })
                    .joins(:order)
                    .where(
-                     orders: { status: [OrderStatus::PAID, OrderStatus::COMPLETED] }
+                     orders: { status: [OrderStatus::PAID, OrderStatus::COMPLETED, OrderStatus::UNPAID] }
                    )
                    .includes(:product, order: :user)
                    .page(params[:page])

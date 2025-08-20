@@ -29,12 +29,14 @@ class CsvService
   private
 
   def process_import(model_class, import_file_record, current_user)
-    import_file_record.import_file.open do |file|
-      CSV.foreach(file, headers: true) do |row|
-        import_row(row, model_class, current_user)
+    ActiveRecord::Base.transaction do
+      import_file_record.import_file.open do |file|
+        CSV.foreach(file, headers: true) do |row|
+          import_row(row, model_class, current_user)
+        end
       end
+      import_file_record.update!(status: 'success')
     end
-    import_file_record.update(status: 'success')
   rescue StandardError => e
     import_file_record.update(status: 'error', error_message: e.message)
     raise e
@@ -50,9 +52,9 @@ class CsvService
     if record.new_record?
       # assign current user id
       row_to_h['user_id'] = current_user&.id
-    elsif record.user_id && record.user_id != current_user&.id
-      # not allow to update other user's products
-      raise "Cannot update record with id #{row_to_h['id']} as it belongs to another user."
+    elsif record.user_id.present? && record.user_id != current_user&.id
+      # allow admin to update any record
+      raise "Cannot update record with id #{row_to_h['id']} as it belongs to another user." unless current_user&.admin?
     end
 
     record.assign_attributes(row_to_h)

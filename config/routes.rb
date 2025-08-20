@@ -51,6 +51,7 @@ Rails.application.routes.draw do
   resources :payments, except: [:destroy] do
     collection do
       get 'new/:order_id', to: 'payments#new', as: 'new_with_order'
+      post 'mark_as_paid/:id', to: 'payments#mark_as_paid', as: 'mark_as_paid'
     end
 
     get 'check_stripe_payment/:payment_id', to: 'payments#check_stripe_payment', as: 'check_stripe_payment'

@@ -2,12 +2,16 @@ class CategoriesController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @categories = Category.all
+    @categories = Category.left_joins(:products)
+                          .group(:id)
+                          .order('COUNT(products.id) DESC')
+                          .page(params[:page])
     authorize @categories
   end
 
   def show
-    @category = Category.find(params[:id])
+    @category = Category.left_joins(:products).find(params[:id])
+    @products = @category.products.page(params[:page])
     authorize @category
   end
 

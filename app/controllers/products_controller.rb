@@ -138,10 +138,15 @@ class ProductsController < ApplicationController
 
   def bulk_import_action
     if params[:import_file].present?
+      import_file = params[:import_file]
+      if File.extname(import_file.original_filename).downcase != '.csv'
+        redirect_to bulk_import_products_path, alert: 'Only CSV files are allowed for import.' and return
+      end
+
       begin
         import_file_record = ImportFile.create(
           user: current_user,
-          import_file: params[:import_file],
+          import_file: import_file,
           status: 'processing'
         )
 
