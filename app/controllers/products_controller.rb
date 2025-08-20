@@ -175,7 +175,12 @@ class ProductsController < ApplicationController
   end
 
   def filtered_products(products)
-    products = products.where(is_draft: false) if current_user.buyer?
+    products = products.where(is_draft: false, error_message: [nil, '']) if current_user.buyer?
+    if current_user.seller?
+      products = products.where(is_draft: false,
+                                error_message: [nil,
+                                                '']).or(products.where(user_id: current_user.id))
+    end
     products = products.page(params[:page]).per(params[:per_page]).order(created_at: :desc)
     products.includes(:user, :category, digital_asset_attachment: :blob,
                                         video_thumbnail_attachment: :blob)

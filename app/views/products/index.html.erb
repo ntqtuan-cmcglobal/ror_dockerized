@@ -17,13 +17,17 @@
           <%= f.label :category_id_eq, "🗂️ Category", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= f.collection_select :category_id_eq, Category.all, :id, :name, { include_blank: "All" }, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
         </div>
-        <div class="flex flex-col w-32">
+        <div class="flex flex-col w-40">
           <%= f.label :price_gteq, "💰 Min Price", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= f.number_field :price_gteq, value: params.dig(:q, :price_gteq), min: 0, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
         </div>
-        <div class="flex flex-col w-32">
+        <div class="flex flex-col w-40">
           <%= f.label :price_lteq, "💸 Max Price", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= f.number_field :price_lteq, value: params.dig(:q, :price_lteq), min: 0, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
+        </div>
+        <div class="flex flex-col w-40">
+          <%= f.label :user_id_eq, "🧑‍💼 Seller", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.collection_select :user_id_eq, User.all.where(role: 'seller'), :id, :full_name, { include_blank: "All" }, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" %>
         </div>
         <div>
           <%= f.submit "Filter", class: "inline-flex items-center px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition cursor-pointer" %>
@@ -52,11 +56,13 @@
         <% end %>
         <select name="q[s]" id="sort-select" class="rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2 bg-blue-50 text-blue-700">
           <option value="created_at desc" <%= (params.dig(:q, :s).blank? || params.dig(:q, :s) == 'created_at desc') ? 'selected' : '' %>>Created Date (Newest)</option>
-          <option value="created_at asc" <%= 'selected' if params.dig(:q, :s) == 'created_at asc' %>>Created Date (Oldest)</option>
-          <option value="name asc" <%= 'selected' if params.dig(:q, :s) == 'name asc' %>>Name (A-Z)</option>
-          <option value="name desc" <%= 'selected' if params.dig(:q, :s) == 'name desc' %>>Name (Z-A)</option>
-          <option value="price asc" <%= 'selected' if params.dig(:q, :s) == 'price asc' %>>Price (Low to High)</option>
-          <option value="price desc" <%= 'selected' if params.dig(:q, :s) == 'price desc' %>>Price (High to Low)</option>
+            <option value="created_at asc" <%= 'selected' if params.dig(:q, :s) == 'created_at asc' %>>Created Date (Oldest)</option>
+            <option value="name asc" <%= 'selected' if params.dig(:q, :s) == 'name asc' %>>Name (A-Z)</option>
+            <option value="name desc" <%= 'selected' if params.dig(:q, :s) == 'name desc' %>>Name (Z-A)</option>
+            <option value="price asc" <%= 'selected' if params.dig(:q, :s) == 'price asc' %>>Price (Low to High)</option>
+            <option value="price desc" <%= 'selected' if params.dig(:q, :s) == 'price desc' %>>Price (High to Low)</option>
+            <option value="average_rating desc" <%= 'selected' if params.dig(:q, :s) == 'average_rating desc' %>>Rating (High to Low)</option>
+            <option value="average_rating asc" <%= 'selected' if params.dig(:q, :s) == 'average_rating asc' %>>Rating (Low to High)</option>
       </select>
       <%= form.submit "Sort", class: "ml-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition cursor-pointer" %>
       <% end %>

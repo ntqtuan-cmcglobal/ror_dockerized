@@ -50,19 +50,18 @@ class Product < ApplicationRecord
 
     puts "Generating demo for digital asset: #{digital_asset.filename}"
 
+    # raise StandardError, 'test error message'
+
     demo_file, content_type, extension = FfmpegService.generate_demo(digital_asset)
     filename = "demo.#{extension}"
 
     digital_asset_demo.attach(io: File.open(demo_file.path), filename: filename, content_type: content_type)
     demo_file.close
     demo_file.unlink
-  rescue StandardError => e
-    Rails.logger.error "Failed to generate digital asset demo for product #{id}: #{e.message}"
-    errors.add(:base, "Failed to generate digital asset demo: #{e.message}")
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[name description price is_draft category_id created_at updated_at]
+    %w[name description price is_draft category_id user_id average_rating created_at updated_at]
   end
 
   def self.ransackable_associations(auth_object = nil)
