@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ReviewsController, type: :request do
+RSpec.describe Administration::ReviewsController, type: :request do
   include Devise::Test::IntegrationHelpers
   let!(:admin) { FactoryBot.create(:user, full_name: Faker::Name.name, email: Faker::Internet.email, password: 'Password123!', role: 'admin') }
   let!(:seller) { FactoryBot.create(:user, full_name: Faker::Name.name, email: Faker::Internet.email, password: 'Password123!', role: 'seller') }
