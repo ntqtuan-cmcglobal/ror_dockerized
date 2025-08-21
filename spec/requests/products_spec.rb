@@ -133,21 +133,42 @@ RSpec.describe 'Products', type: :request do
 
   describe 'POST /products/:id/save_review' do
     let!(:product) { Product.create!(valid_attributes) }
-    let(:review_params) { { rating: 5, comment: 'Great!', product_id: product.id, user_id: user.id } }
+    let(:review_user) { User.create!(full_name: Faker::Name.name, email: Faker::Internet.email, password: Faker::Internet.password, role: 'buyer') }
+    let(:review_params) { { rating: 5, comment: 'Great!', product_id: product.id, user_id: review_user.id } }
 
     before do
-      user.update(role: 'buyer')
+      sign_in review_user
     end
 
-    it 'creates or updates a review and redirects with notice' do
-      post save_review_product_path(product), params: { review: review_params }
-      expect(response).to redirect_to(product)
-      expect(flash[:notice]).to eq('Review was successfully saved.')
+    context 'when user has bought the product' do
+      before do
+        # Simulate purchase
+        Order.create!(user: review_user, order_items: [FactoryBot.build(
+          :order_item,
+          product_id: product.id,
+          quantity: 1,
+          price: product.price
+        )], total_price: product.price, status: 'completed')
+      end
+
+      it 'creates or updates a review and redirects with notice' do
+        post save_review_product_path(product), params: { review: review_params }
+        expect(response).to redirect_to(product)
+        expect(flash[:notice]).to eq('Review was successfully saved.')
+      end
+
+      it 'renders show if review is invalid' do
+        post save_review_product_path(product), params: { review: review_params.merge(rating: nil) }
+        expect(response).to render_template(:show)
+      end
     end
 
-    it 'renders show if review is invalid' do
-      post save_review_product_path(product), params: { review: review_params.merge(rating: nil) }
-      expect(response).to render_template(:show)
+    context 'when user has not bought the product' do
+      it 'does not allow review and redirects with alert' do
+        post save_review_product_path(product), params: { review: review_params }
+        expect(response).to redirect_to(product)
+        expect(flash[:alert]).to eq('You must buy this product to leave a review.')
+      end
     end
   end
 

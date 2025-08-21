@@ -23,6 +23,7 @@ module Administration
     end
 
     def destroy
+      @review = Review.find(params[:id])
       @review.destroy
       redirect_to administration_reviews_path, notice: 'Review was successfully deleted.'
     end

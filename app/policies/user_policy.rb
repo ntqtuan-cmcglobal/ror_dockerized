@@ -34,6 +34,10 @@ class UserPolicy
     update?
   end
 
+  def destroy?
+    user.admin?
+  end
+
   # Scope class for resolving user records.
   class Scope
     def initialize(user, scope)

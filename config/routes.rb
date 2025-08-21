@@ -63,7 +63,7 @@ Rails.application.routes.draw do
     resources :users
     resources :orders
     resources :payments, only: %i[index]
-    resources :reviews, only: %i[index destroy]
+    resources :reviews, only: %i[index show destroy]
   end
 
   # resources :blogs

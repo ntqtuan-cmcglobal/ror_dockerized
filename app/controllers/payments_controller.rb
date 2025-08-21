@@ -11,29 +11,20 @@ class PaymentsController < ApplicationController
         payment.stripe_checkout_url = Stripe::Checkout::Session.retrieve(payment.stripe_session_id).url
       end
     end
-    @order = Order.find(params[:order_id])
+    @order = Order.find_by(id: params[:order_id])
+    redirect_to root_path, alert: 'Order not found.' and return unless @order
+
     authorize @order, :show?
-  end
-
-  def show
-    authorize @payment
-    # Ensure the user is authorized to view this payment
-    redirect_to root_path, alert: 'Payment not found.' and return unless @payment
-
-    # If the user is not an admin, check if they are the owner of the payment
-    return if current_user.admin? || @payment.user_id == current_user.id
-
-    redirect_to root_path, alert: 'You are not authorized to view this payment.'
-    nil
   end
 
   def new
     return unless params[:order_id]
 
     @order = Order.find_by(id: params[:order_id])
+    redirect_to root_path, alert: 'Order not found.' and return unless @order
+
     @payment = Payment.new(order_id: @order.id)
     authorize @payment
-    redirect_to root_path, alert: 'Order not found.' and return unless @order
 
     # Ensure the user is authorized to create a payment for this order
     authorize @payment, :new?
@@ -83,29 +74,13 @@ class PaymentsController < ApplicationController
     redirect_to order_payments_url(@payment.order)
   end
 
-  def edit; end
-
-  def update
-    authorize @payment
-    if @payment.update(payment_params)
-      redirect_to @payment, notice: 'Payment was successfully updated.'
-    else
-      render :edit
-    end
-  end
-
-  def destroy; end
-
   def mark_as_paid
     @payment = Payment.find(params[:id])
     authorize @payment
-    if @payment.payment_method == 'bank_transfer'
-      @payment.update(result: PaymentResult::SUCCESS)
-      redirect_to order_payments_url(@payment.order), notice: 'Payment was marked as paid.'
-    else
-      redirect_to order_payments_url(@payment.order),
-                  alert: 'Only bank transfer payments can be marked as paid manually.'
-    end
+    return unless @payment.payment_method == 'bank_transfer'
+
+    @payment.update(result: PaymentResult::SUCCESS)
+    redirect_to order_payments_url(@payment.order), notice: 'Payment was marked as paid.'
   end
 
   def check_stripe_payment
