@@ -1,5 +1,5 @@
 class ProductsController < ApplicationController
-  before_action :authenticate_user!, only: %i[index new create edit update destroy]
+  before_action :authenticate_user!, only: %i[new create edit update destroy]
 
   def index
     time = Benchmark.measure do
@@ -86,7 +86,12 @@ class ProductsController < ApplicationController
 
   def save_review
     @product = Product.find(params[:id])
-    pp current_user
+
+    unless @product.bought_by?(current_user)
+      return redirect_to @product,
+                         alert: 'You must buy this product to leave a review.'
+    end
+
     @review = @product.reviews.find_or_initialize_by(user_id: current_user.id)
     @review.assign_attributes(review_params)
 
@@ -175,13 +180,28 @@ class ProductsController < ApplicationController
   end
 
   def filtered_products(products)
-    products = products.where(is_draft: false, error_message: [nil, '']) if current_user.buyer?
-    if current_user.seller?
-      products = products.where(is_draft: false,
-                                error_message: [nil,
-                                                '']).or(products.where(user_id: current_user.id))
+    products = filter_by_role(products)
+    products = paginate_and_order(products)
+    include_associations(products)
+  end
+
+  def filter_by_role(products)
+    case current_user&.role
+    when 'buyer'
+      products.where(is_draft: false, error_message: [nil, ''])
+    when 'seller'
+      products.where(is_draft: false, error_message: [nil, ''])
+              .or(products.where(user_id: current_user.id))
+    else
+      products.where(is_draft: false, error_message: [nil, ''])
     end
-    products = products.page(params[:page]).per(params[:per_page]).order(created_at: :desc)
+  end
+
+  def paginate_and_order(products)
+    products.page(params[:page]).per(params[:per_page]).order(created_at: :desc)
+  end
+
+  def include_associations(products)
     products.includes(:user, :category, digital_asset_attachment: :blob,
                                         video_thumbnail_attachment: :blob)
   end

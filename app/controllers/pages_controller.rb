@@ -13,7 +13,11 @@ class PagesController < ApplicationController
                   .limit(8)
                   .includes(:user, :category, digital_asset_attachment: :blob, video_thumbnail_attachment: :blob)
     else
-      redirect_to new_user_session_path and return
+      @products =
+        Product.where(is_draft: false)
+               .order('products.average_rating DESC')
+               .limit(8)
+               .includes(:user, :category, digital_asset_attachment: :blob, video_thumbnail_attachment: :blob)
     end
   end
 

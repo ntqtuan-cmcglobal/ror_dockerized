@@ -7,12 +7,12 @@ class ProductPolicy
   end
 
   def index?
-    user.present?
+    true
   end
 
   def show?
-    return false unless user.present?
-    return false if user.buyer? && (product.is_draft? || product.have_error?)
+    # return false unless user.present?
+    return false if product.is_draft? || product.have_error?
 
     true
   end
@@ -26,19 +26,21 @@ class ProductPolicy
   end
 
   def edit?
+    return false unless user.present?
+
     user.admin? || (user.seller? && product.owned_by?(user))
   end
 
   def update?
-    user.admin? || (user.seller? && product.owned_by?(user))
+    edit?
   end
 
   def destroy?
-    user.admin? || (user.seller? && product.owned_by?(user))
+    user&.admin? || (user&.seller? && product.owned_by?(user))
   end
 
   def publish?
-    user.admin? || (user.seller? && product.owned_by?(user) && !product.is_draft?)
+    user&.admin? || (user.seller? && product.owned_by?(user) && !product.is_draft?)
   end
 
   def download?

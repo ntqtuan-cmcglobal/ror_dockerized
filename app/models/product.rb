@@ -28,6 +28,12 @@ class Product < ApplicationRecord
     self.user == user
   end
 
+  def bought_by?(user)
+    Order.joins(:order_items)
+         .where(order_items: { product_id: id }, user_id: user.id, status: [OrderStatus::PAID, OrderStatus::COMPLETED])
+         .exists?
+  end
+
   def have_error?
     error_message.present?
   end

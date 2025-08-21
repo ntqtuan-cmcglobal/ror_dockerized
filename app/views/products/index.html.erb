@@ -150,6 +150,8 @@
                         <% else %>
                           <%= button_to 'Add to Cart', add_item_cart_path(product_id: product.id), method: :post, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded #{in_cart ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer'}", disabled: in_cart %>
                         <% end %>
+                      <% elsif current_user.nil? %>
+                        <%= button_to 'Add to Cart', add_item_cart_path(product_id: product.id), method: :post, class: "inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer" %>
                       <% end %>
                     </div>
                   </div>
