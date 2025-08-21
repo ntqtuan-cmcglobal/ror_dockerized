@@ -27,6 +27,9 @@ class Payment < ApplicationRecord
     # Disable other payments of this order if any payment result is success
     return unless result == PaymentResult::SUCCESS
 
+    # Send email to user when payment is successful
+    UserMailer.payment_success(order.user, self).deliver_later if order.user.present?
+
     if order.status == OrderStatus::UNPAID
       order.status = OrderStatus::PAID
       order.save(validate: false)

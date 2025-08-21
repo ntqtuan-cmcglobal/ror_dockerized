@@ -20,7 +20,8 @@
               <tr class="hover:bg-gray-100 transition">
                 <td class="px-6 py-4 border-b"><%= payment.id %></td>
                 <td class="px-6 py-4 border-b"><%= payment.order_id %></td>
-                <td class="px-6 py-4 border-b" style="background-color: <%= PaymentResult.color_for(payment.result) %>; color: white;">
+                <td class="px-6 py-4 border-b" style="background-color: <%= PaymentResult.color_for(payment.result) %>; color: white;"
+                  <% if payment.error_message.present? %>title="<%= payment.error_message %>"<% end %>>
                   <%= payment.result %>
                 </td>
                 <td class="px-6 py-4 border-b">
@@ -52,14 +53,14 @@
             </tfoot>
           </table>
         </div>
-        <% if policy(Order).show? %>
+        <% if policy(@order).show? %>
           <div class="mt-6 flex justify-start">
             <%= link_to 'Back to Order Detail', order_path(params[:order_id]), class: 'inline-block px-5 py-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold transition-colors duration-150' %>
           </div>
         <% end %>
       <% else %>
         <p class="text-gray-500 mt-8 text-center">No payments found for this order.</p>
-        <% if policy(Order).show? %>
+        <% if policy(@order).show? %>
           <div class="mt-6 flex justify-start">
             <%= link_to 'Back to Order Detail', order_path(params[:order_id]), class: 'inline-block px-5 py-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold transition-colors duration-150' %>
           </div>

@@ -26,7 +26,7 @@ class OrderPolicy
   end
 
   def show?
-    user.admin? || (user.buyer? && order.user_id == user.id)
+    user.admin? || (user.seller? && order.get_seller.include?(user)) || (user.buyer? && order.user_id == user.id)
   end
 
   def index?

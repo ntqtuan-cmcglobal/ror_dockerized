@@ -11,6 +11,8 @@ class PaymentsController < ApplicationController
         payment.stripe_checkout_url = Stripe::Checkout::Session.retrieve(payment.stripe_session_id).url
       end
     end
+    @order = Order.find(params[:order_id])
+    authorize @order, :show?
   end
 
   def show
@@ -75,9 +77,9 @@ class PaymentsController < ApplicationController
     else
       render :new
     end
-  rescue Stripe::CardError => e
+  rescue StandardError => e
     flash[:error] = e.message
-    @payment.update(result: PaymentResult::ERROR)
+    @payment.update(result: PaymentResult::ERROR, error_message: e.message)
     redirect_to order_payments_url(@payment.order)
   end
 
@@ -106,16 +108,6 @@ class PaymentsController < ApplicationController
     end
   end
 
-  private
-
-  def set_payment
-    @payment = Payment.find(params[:id])
-  end
-
-  def payment_params
-    params.require(:payment).permit(:order_id, :result, :payment_method)
-  end
-
   def check_stripe_payment
     @payment = Payment.find(params[:payment_id])
     if @payment.payment_method == 'stripe'
@@ -129,9 +121,19 @@ class PaymentsController < ApplicationController
     else
       redirect_to order_payments_url(@payment.order), alert: 'Payment method is not Stripe.'
     end
-  rescue Stripe::CardError => e
+  rescue StandardError => e
     flash[:error] = e.message
-    @payment.update(result: PaymentResult::ERROR)
+    @payment.update(result: PaymentResult::ERROR, error_message: e.message)
     redirect_to order_payments_url(@payment.order)
+  end
+
+  private
+
+  def set_payment
+    @payment = Payment.find(params[:id])
+  end
+
+  def payment_params
+    params.require(:payment).permit(:order_id, :result, :payment_method, :error_message)
   end
 end

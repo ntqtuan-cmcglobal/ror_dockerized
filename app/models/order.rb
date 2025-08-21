@@ -37,6 +37,10 @@ class Order < ApplicationRecord
   scope :completed, -> { where(status: 'completed') }
 
   # Instance methods
+  def get_seller
+    order_items.map(&:product).map(&:user).uniq
+  end
+
   def total_items
     order_items.sum(:quantity)
   end
