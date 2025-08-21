@@ -41,7 +41,7 @@ RSpec.describe Administration::PaymentsController, type: :request do
     end
 
     it 'returns no payments for unmatched user full name' do
-      get administration_payments_path, params: { q: { order_user_full_name_cont: 'Nonexistent Name' } }
+      get administration_payments_path, params: { q: { order_user_full_name_cont: '!@#$' } }
       expect(response).to have_http_status(:ok)
       expect(response.body).not_to include(payment1.id.to_s)
       expect(response.body).not_to include(payment2.id.to_s)

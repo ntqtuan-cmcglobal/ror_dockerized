@@ -8,8 +8,10 @@ class DigitalAssetDemoGenerateJob
     product = Product.find(product_id)
 
     # clear error message before generating demo
-    product.error_message = nil
-    product.save
+    if product.error_message.present?
+      product.error_message = nil
+      product.save
+    end
 
     product.generate_digital_asset_demo if product.digital_asset.attached?
   rescue StandardError => e

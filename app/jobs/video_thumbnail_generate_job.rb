@@ -13,8 +13,10 @@ class VideoThumbnailGenerateJob
     return unless product.digital_asset.attached? && product.digital_asset.content_type.start_with?('video/')
 
     # clear error message before generating thumbnail
-    product.error_message = nil
-    product.save
+    if product.error_message.present?
+      product.error_message = nil
+      product.save
+    end
 
     product.generate_video_thumbnail
   rescue StandardError => e

@@ -12,6 +12,7 @@ SimpleCov.start do
   add_group 'Policies', 'app/policies'
   add_group 'Jobs', 'app/jobs'
   add_group 'Channels', 'app/channels'
+  add_group 'Services', 'app/services'
 end
 SimpleCov.coverage_dir 'public/coverage'
 
