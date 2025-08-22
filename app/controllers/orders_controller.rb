@@ -10,6 +10,11 @@ class OrdersController < ApplicationController
 
     redirect_to root_path, alert: 'Cart not found.' and return unless @cart
 
+    seller_ids = @cart.cart_items.map { |item| item.product.user_id }.uniq
+    if seller_ids.size != 1
+      redirect_to @cart, alert: 'All products in the order must be from the same seller.' and return
+    end
+
     @order = Order.new(
       user_id: current_user.id,
       status: OrderStatus::UNPAID,
