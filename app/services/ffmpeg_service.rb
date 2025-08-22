@@ -15,9 +15,16 @@ class FfmpegService
   # type: :video, :image, :audio
   # options: hash of quality params
   def self.generate_demo(digital_asset)
-    tempfile = Tempfile.new(['demo', File.extname(digital_asset.filename.to_s)])
+    filename = if ENV['RAILS_ENV'] == 'test'
+                 digital_asset.original_filename.to_s
+               else
+                 digital_asset.filename.to_s
+               end
+    tempfile = Tempfile.new(['demo', File.extname(filename)])
+
     digital_asset.open do |file|
       movie = FFMPEG::Movie.new(file.path)
+
       case digital_asset.content_type
       when 'video/mp4'
         # Add watermark to video (bottom right corner)

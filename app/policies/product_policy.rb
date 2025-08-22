@@ -11,7 +11,7 @@ class ProductPolicy
   end
 
   def show?
-    # return false unless user.present?
+    return true if user&.admin? || (user&.seller? && product.owned_by?(user))
     return false if product.is_draft? || product.have_error?
 
     true
@@ -22,7 +22,7 @@ class ProductPolicy
   end
 
   def create?
-    user.admin? || user.seller?
+    new?
   end
 
   def edit?

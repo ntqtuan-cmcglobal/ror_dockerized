@@ -192,6 +192,8 @@ class ProductsController < ApplicationController
     when 'seller'
       products.where(is_draft: false, error_message: [nil, ''])
               .or(products.where(user_id: current_user.id))
+    when 'admin'
+      products
     else
       products.where(is_draft: false, error_message: [nil, ''])
     end
