@@ -29,3 +29,16 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Sorbet
+/sorbet/*
+
+# Public
+/public
+
+# Builds
+/app/assets/builds
+
+# Env
+.env
+config/credentials/*.key
