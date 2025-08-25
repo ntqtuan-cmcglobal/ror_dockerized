@@ -44,7 +44,8 @@ class OrdersController < ApplicationController
   end
 
   def index
-    @orders = policy_scope(Order)
+    @q = policy_scope(Order).ransack(params[:q])
+    @orders = @q.result
     @orders = @orders.where(user_id: current_user.id) if current_user.buyer?
     @orders = @orders.page(params[:page]).order(created_at: :desc)
 

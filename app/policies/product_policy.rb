@@ -44,8 +44,11 @@ class ProductPolicy
   end
 
   def download?
-    user.present? && (user.buyer? || user.seller?) && product.digital_asset.attached? && user.orders.joins(:order_items).where(
-      order_items: { product_id: product.id }, status: 'paid'
-    ).exists?
+    user.present? &&
+      (user.buyer? || user.seller?) &&
+      product.digital_asset.attached? &&
+      user.orders.joins(:order_items).where(
+        order_items: { product_id: product.id }, status: 'paid'
+      ).exists?
   end
 end
