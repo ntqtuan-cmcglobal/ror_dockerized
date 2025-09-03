@@ -34,7 +34,14 @@ class MessagesController < ApplicationController
                                      sender_id: @message.user_id,
                                      user_full_name: @message.user.full_name,
                                      formatted_time: @message.created_at.strftime('%I:%M %p') }
-      pp ActionCable.server.connections
+
+      receiver_id = (ChatRoom.where(chat_room_id: @message.chat_room_id)
+      .pluck(:user_ids)
+      .flatten.uniq - [current_user.id])
+                    .first
+
+      ActionCable.server.broadcast "chat_notification_channel_#{receiver_id}",
+                                   { room_id: @message.chat_room_id, sender_id: @message.user_id }
     else
       render :index
     end

@@ -13,14 +13,14 @@ if chatRoomId?
         received: (data) ->
             console.log "Received data:", data
             # Called when there's incoming data on the websocket for this channel
-            isCurrentUser = if data['sender_id'] == parseInt($('#current_user_id').val()) then true else false
+            isCurrentUser = data['sender_id'] == parseInt($('#current_user_id').val())
             rowClass = if isCurrentUser then 'flex-row' else 'flex-row-reverse'
             bgClass = if isCurrentUser then 'bg-green-100 text-green-900' else 'bg-blue-100 text-blue-900'
             timeAlign = if isCurrentUser then 'text-left' else 'text-right'
 
             redDot = unless isCurrentUser then '<span class="ml-2 inline-block w-2 h-2 rounded-full bg-red-500" title="New message"></span>' else ''
             $('#messages').append """
-                <div class="flex items-start space-x-3 #{rowClass}">
+                <div class="flex items-start gap-3 #{rowClass}">
                     <div>
                         <div class="#{bgClass} rounded-lg px-4 py-2 flex items-center">
                             <span class="font-semibold mr-1">#{data['user_full_name']}:</span> #{data['message']}
@@ -34,4 +34,5 @@ if chatRoomId?
                 $('#messages').scrollTop($('#messages')[0].scrollHeight)
 
         send_message: (message) ->
-            @perform 'send_message', message: message
+            console.log "Sending message:", message
+            #@perform 'send_message', message: message
