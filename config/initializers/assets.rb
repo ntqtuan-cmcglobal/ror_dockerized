@@ -13,6 +13,5 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
 Rails.application.config.assets.precompile += %w[tailwind.css application.css]
-Rails.application.config.assets.precompile += %w[application.js]
 Rails.application.config.assets.precompile += %w[jquery.min.js jquery_ujs.js]
 Rails.application.config.assets.precompile += %w[select2.js select2-rails.js]

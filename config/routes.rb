@@ -66,6 +66,15 @@ Rails.application.routes.draw do
     resources :reviews, only: %i[index show destroy]
   end
 
+  resources :messages, only: %i[index create] do
+    collection do
+      post 'switch_user', to: 'messages#switch_user', as: 'switch_user'
+    end
+  end
+
+  # Action Cable
+  mount ActionCable.server => '/cable'
+
   # resources :blogs
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

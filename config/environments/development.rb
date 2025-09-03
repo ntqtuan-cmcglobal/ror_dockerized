@@ -80,4 +80,16 @@ Rails.application.configure do
 
   # Hosts (allow all - must be changed if use production env)
   config.hosts.clear
+
+  # Action Cable
+  config.action_cable.disable_request_forgery_protection = true
+  # Allow requests from localhost and Docker network
+  config.action_cable.allowed_request_origins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    %r{http://172\.18\.\d+\.\d+}
+  ]
+
+  # Set the Action Cable URL (adjust port if needed)
+  config.action_cable.url = 'ws://localhost:3000/cable'
 end

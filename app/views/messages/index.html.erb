@@ -1,0 +1,32 @@
+<div class="max-w-2xl mx-auto mt-10 bg-white rounded shadow p-6">
+  <!-- User Switcher -->
+  <% if @chat_users.present? %>
+    <%= form_with url: switch_user_messages_path, method: :post, local: true, class: "mb-6 flex items-center justify-between", id: "user_switch_form" do |form| %>
+      <label for="user_select" class="font-semibold text-gray-700 mr-2">Talk to:</label>
+      <%= form.select :user_id, options_from_collection_for_select(@chat_users, :id, :full_name, @selected_user_id), {}, class: "border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300", id: "user_select" %>
+    <% end %>
+  <% end %>
+  <h2 class="text-2xl font-bold mb-6 text-blue-700">Chat Room</h2>
+  <div id="messages" class="space-y-4 max-h-96 overflow-y-auto">
+    <% if @messages.present? %>
+      <% @messages.each do |message| %>
+        <div class="flex items-start space-x-3 <%= 'flex-row' if message.user == current_user %> <%= 'flex-row-reverse' unless message.user == current_user %>">
+          <div>
+            <div class="<%= message.user == current_user ? 'bg-green-100 text-green-900' : 'bg-blue-100 text-blue-900' %> rounded-lg px-4 py-2">
+              <span class="font-semibold"><%= message.user.full_name %>:</span> <%= message.content %>
+            </div>
+            <div class="text-xs text-gray-400 mt-1 <%= message.user == current_user ? 'text-left' : 'text-right' %>"><%= message.created_at.strftime("%I:%M %p") %></div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-gray-500 text-center py-4">No messages yet.</div>
+    <% end %>
+  </div>
+  <!-- Message input -->
+  <%= form_with url: messages_path, method: :post, scope: :message, local: true, class: "mt-6 flex" do |form| %>
+    <%= form.hidden_field :chat_room_id, value: @chat_room_id, id: "chat_room_id" %>
+    <%= form.text_field :content, placeholder: "Type your message...", class: "flex-1 border rounded-l px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300" %>
+    <%= form.submit "Send", class: "bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 cursor-pointer", id: "send_message_button" %>
+  <% end %>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_21_040216) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_27_104053) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -74,6 +74,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_040216) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "chat_rooms", primary_key: "chat_room_id", id: :string, force: :cascade do |t|
+    t.integer "user_ids", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_ids"], name: "index_chat_rooms_on_user_ids", unique: true
+  end
+
   create_table "import_files", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "status", default: "waiting_for_upload", null: false
@@ -82,6 +89,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_040216) do
     t.datetime "deleted_at"
     t.text "error_message"
     t.index ["user_id"], name: "index_import_files_on_user_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "content"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "chat_room_id"
+    t.index ["chat_room_id"], name: "index_messages_on_chat_room_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -215,6 +232,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_040216) do
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
   add_foreign_key "import_files", "users"
+  add_foreign_key "messages", "chat_rooms", primary_key: "chat_room_id"
+  add_foreign_key "messages", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "order_items", "orders"

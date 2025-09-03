@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_one :cart, dependent: :destroy
   has_many :access_tokens, class_name: 'Doorkeeper::AccessToken',
                            foreign_key: :resource_owner_id, dependent: :destroy
+  has_many :messages, dependent: :destroy
 
   # Active Storage
   has_one_attached :avatar

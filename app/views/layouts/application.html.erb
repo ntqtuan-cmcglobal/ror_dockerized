@@ -6,10 +6,12 @@
     <%= csp_meta_tag %>
     <%= javascript_importmap_tags %>
     <%= favicon_link_tag asset_path('favicon.ico') %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application" %>
   </head>
   <body class="bg-gray-50 min-h-screen">
+    <% if user_signed_in? %>
+      <%= hidden_field_tag :current_user_id, current_user.id, id: "current_user_id" %>
+    <% end %>
     <div class="max-w-6xl mx-auto px-4 py-6">
       <%= render "shared/navigation" %>
       <% if notice %>
@@ -31,5 +33,15 @@
       </div>
       <%= render "shared/footer" %>
     </div>
+    <!-- Fixed Chat Icon Button -->
+    <% if user_signed_in? %>
+      <div class="fixed bottom-6 right-6 z-50">
+        <%= link_to messages_path, aria: { label: "Open Chat" }, class: "bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg p-4 flex items-center justify-center transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer" do %>
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8L3 20l1.8-3.6A7.96 7.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        <% end %>
+      </div>
+    <% end %>
   </body>
 </html>
